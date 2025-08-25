@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,10 +20,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.project.hismc.ui.theme.HismcTheme
 
 @Composable
-fun StartActivity(){
+fun StartActivity(navController: NavController){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,6 +47,16 @@ fun StartActivity(){
                 .width(400.dp)
                 .height(500.dp)
         )
+        Button(onClick = {
+            navController.navigate(Screen.Start.route)
+
+        },
+            modifier = Modifier
+                .height(50.dp)
+                .width(100.dp)
+        ) {
+            Text("시작하기")
+        }
     }
 }
 
@@ -52,6 +64,6 @@ fun StartActivity(){
 @Composable
 fun Preview(){
     HismcTheme{
-        StartActivity()
+
     }
 }
