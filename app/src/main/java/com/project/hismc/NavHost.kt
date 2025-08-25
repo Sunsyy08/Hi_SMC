@@ -11,7 +11,10 @@ fun SMCNavHost(navController: NavHostController){
     NavHost(navController = navController, startDestination = Screen.Start.route){
 
         composable(Screen.Start.route){
-            StartActivity(navController = navController)
+            StartScreen(navController = navController)
+        }
+        composable(Screen.SignUp.route) {
+            SignUpScreen(navController = navController)
         }
     }
 }

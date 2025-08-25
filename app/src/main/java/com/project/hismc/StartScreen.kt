@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +25,7 @@ import androidx.navigation.NavController
 import com.project.hismc.ui.theme.HismcTheme
 
 @Composable
-fun StartActivity(navController: NavController){
+fun StartScreen(navController: NavController){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,12 +49,14 @@ fun StartActivity(navController: NavController){
                 .height(500.dp)
         )
         Button(onClick = {
-            navController.navigate(Screen.Start.route)
-
+            navController.navigate(Screen.SignUp.route)
         },
             modifier = Modifier
                 .height(50.dp)
-                .width(100.dp)
+                .width(100.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF00809D)
+            )
         ) {
             Text("시작하기")
         }
