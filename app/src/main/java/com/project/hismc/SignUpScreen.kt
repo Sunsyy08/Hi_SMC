@@ -2,6 +2,7 @@ package com.project.hismc
 
 import android.R.attr.onClick
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -28,8 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,17 +56,22 @@ fun SignUpScreen(navController: NavController) {
                 .fillMaxSize()
                 .statusBarsPadding()
                 .graphicsLayer(
-                    compositingStrategy = CompositingStrategy.ModulateAlpha,
-                    alpha = 0.75f
+                    compositingStrategy = CompositingStrategy.ModulateAlpha
                 )
         ) {
-            translate(left = -500f, top = -800f) {
-                drawCircle(Color.Blue, radius = 200.dp.toPx())
+            translate(left = -400f, top = -800f) {
+                drawCircle(Color(0xffB52FF8), radius = 200.dp.toPx())
             }
-            translate(left = -500f, top = -700f) {
-                drawCircle(Color.Red, radius = 200.dp.toPx())
+            translate(left = -500f, top = -730f) {
+                drawCircle(Color(0xff40CEF2), radius = 200.dp.toPx())
             }
         }
+        Image(
+            painter = painterResource(id = R.drawable.smc_ms),
+            contentDescription = "학교 마스코트",
+            modifier = Modifier
+                .offset(x = (20).dp, y = (50).dp)
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
