@@ -8,12 +8,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -84,7 +87,6 @@ fun SignUpScreen(navController: NavController) {
             lineHeight = 50.sp,
             color = Color.White,
         )
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,10 +94,28 @@ fun SignUpScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(150.dp))
             OutlinedTextField(
+                modifier = Modifier.height(60.dp).width(320.dp),
                 value = text,
                 onValueChange = { text = it },
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(10.dp),
+                label = { Text("인순이 전화번호를 입력하세요.") }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            OutlinedTextField(
+                modifier = Modifier.height(60.dp).width(320.dp),
+                value = text,
+                onValueChange = { text = it },
+                shape = RoundedCornerShape(10.dp),
+                label = { Text("인순이 전화번호를 입력하세요.") }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            OutlinedTextField(
+                modifier = Modifier.height(60.dp).width(320.dp),
+                value = text,
+                onValueChange = { text = it },
+                shape = RoundedCornerShape(10.dp),
                 label = { Text("인순이 전화번호를 입력하세요.") }
             )
         }
