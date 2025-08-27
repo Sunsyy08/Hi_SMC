@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.hismc.ui.theme.HismcTheme
@@ -59,19 +60,31 @@ fun SignUpScreen(navController: NavController) {
                     compositingStrategy = CompositingStrategy.ModulateAlpha
                 )
         ) {
-            translate(left = -400f, top = -800f) {
-                drawCircle(Color(0xffB52FF8), radius = 200.dp.toPx())
-            }
-            translate(left = -500f, top = -730f) {
-                drawCircle(Color(0xff40CEF2), radius = 200.dp.toPx())
+//            translate(left = -400f, top = -800f) {
+//                drawCircle(Color(0xffB52FF8), radius = 200.dp.toPx())
+//            }
+            translate(left = -80f, top = -1200f, ) {
+                drawCircle(Color(0xff40CEF2), radius = 350.dp.toPx())
+                RoundedCornerShape(400.dp)
             }
         }
         Image(
             painter = painterResource(id = R.drawable.smc_ms),
             contentDescription = "학교 마스코트",
             modifier = Modifier
-                .offset(x = (20).dp, y = (50).dp)
+                .size(200.dp)
+                .offset(x = (210).dp, y = (30).dp)
         )
+        Text(
+            "Create \nAccount",
+            modifier = Modifier
+                .offset(x = (30).dp, y = (150).dp),
+            fontSize = (50.sp),
+            letterSpacing = 2.sp,
+            lineHeight = 50.sp,
+            color = Color.White,
+        )
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
