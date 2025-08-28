@@ -1,6 +1,8 @@
 package com.project.hismc
 
+import android.R.attr.fontWeight
 import android.R.attr.onClick
+import android.text.style.UnderlineSpan
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,12 +19,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarDefaults.contentColor
+import androidx.compose.material3.TabRowDefaults.contentColor
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,11 +51,15 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextDecoration.Companion.Underline
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.hismc.ui.theme.HismcTheme
@@ -83,6 +102,7 @@ fun SignUpScreen(navController: NavController) {
             modifier = Modifier
                 .offset(x = (30).dp, y = (150).dp),
             fontSize = (50.sp),
+            fontWeight = FontWeight.ExtraBold,
             letterSpacing = 2.sp,
             lineHeight = 50.sp,
             color = Color.White,
@@ -100,7 +120,7 @@ fun SignUpScreen(navController: NavController) {
                 value = text,
                 onValueChange = { text = it },
                 shape = RoundedCornerShape(10.dp),
-                label = { Text("인순이 전화번호를 입력하세요.") }
+                label = { Text("Name") }
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
@@ -108,7 +128,7 @@ fun SignUpScreen(navController: NavController) {
                 value = text,
                 onValueChange = { text = it },
                 shape = RoundedCornerShape(10.dp),
-                label = { Text("인순이 전화번호를 입력하세요.") }
+                label = { Text("Email") }
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
@@ -116,11 +136,53 @@ fun SignUpScreen(navController: NavController) {
                 value = text,
                 onValueChange = { text = it },
                 shape = RoundedCornerShape(10.dp),
-                label = { Text("인순이 전화번호를 입력하세요.") }
+                label = { Text("PassWord") }
+            )
+            Text(
+                text = "Sign Up",
+                fontSize = 26.sp,
+                modifier = Modifier
+                    .offset(x = (30).dp, y = (130).dp),
+                fontWeight = FontWeight.Medium
+            )
+            FloatingActionButton(
+                onClick = {  },
+                shape = CircleShape,
+                contentColor = Color(0xffffffff),
+                containerColor = Color(0xff000000),
+                modifier = Modifier
+                    .offset(x = (120).dp, y = (90).dp),
+            ) {
+                Icon(Icons.Filled.ArrowForward, "Large floating action button")
+            }
+        }
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .graphicsLayer(
+                    compositingStrategy = CompositingStrategy.ModulateAlpha
+                )
+        ) {
+            translate(left = 280f, top = 1200f, ) {
+                drawCircle(Color(0xff40CEF2), radius = 120.dp.toPx())
+                RoundedCornerShape(400.dp)
+            }
+        }
+        TextButton(
+            onClick = { },
+            shape = ButtonDefaults.shape,
+            modifier = Modifier.offset(x = 250.dp, y = 840.dp).zIndex(1f)
+        ) {
+            Text(
+                text = "Sign In",
+                color = Color.White,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Normal,
+                textDecoration = TextDecoration.Underline
             )
         }
     }
-
 }
 
 
