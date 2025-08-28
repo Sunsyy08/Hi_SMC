@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.colorResource
@@ -114,25 +115,25 @@ fun SignUpScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(150.dp))
+            Spacer(modifier = Modifier.height(180.dp))
             OutlinedTextField(
-                modifier = Modifier.height(60.dp).width(320.dp),
+                modifier = Modifier.height(60.dp).width(350.dp),
                 value = text,
                 onValueChange = { text = it },
                 shape = RoundedCornerShape(10.dp),
                 label = { Text("Name") }
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             OutlinedTextField(
-                modifier = Modifier.height(60.dp).width(320.dp),
+                modifier = Modifier.height(60.dp).width(350.dp),
                 value = text,
                 onValueChange = { text = it },
                 shape = RoundedCornerShape(10.dp),
                 label = { Text("Email") }
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             OutlinedTextField(
-                modifier = Modifier.height(60.dp).width(320.dp),
+                modifier = Modifier.height(60.dp).width(350.dp),
                 value = text,
                 onValueChange = { text = it },
                 shape = RoundedCornerShape(10.dp),
@@ -151,7 +152,8 @@ fun SignUpScreen(navController: NavController) {
                 contentColor = Color(0xffffffff),
                 containerColor = Color(0xff000000),
                 modifier = Modifier
-                    .offset(x = (120).dp, y = (90).dp),
+                    .offset(x = (120).dp, y = (90).dp)
+                    .size(50.dp),
             ) {
                 Icon(Icons.Filled.ArrowForward, "Large floating action button")
             }
@@ -164,20 +166,21 @@ fun SignUpScreen(navController: NavController) {
                     compositingStrategy = CompositingStrategy.ModulateAlpha
                 )
         ) {
-            translate(left = 280f, top = 1200f, ) {
-                drawCircle(Color(0xff40CEF2), radius = 120.dp.toPx())
-                RoundedCornerShape(400.dp)
+            rotate(degrees = -3f) {
+                translate(left = 280f, top = 1200f) {
+                    drawCircle(Color(0xff40CEF2), radius = 110.dp.toPx())
+                }
             }
         }
         TextButton(
             onClick = { },
             shape = ButtonDefaults.shape,
-            modifier = Modifier.offset(x = 250.dp, y = 840.dp).zIndex(1f)
+            modifier = Modifier.offset(x = 270.dp, y = 840.dp).zIndex(1f)
         ) {
             Text(
                 text = "Sign In",
                 color = Color.White,
-                fontSize = 26.sp,
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Normal,
                 textDecoration = TextDecoration.Underline
             )
