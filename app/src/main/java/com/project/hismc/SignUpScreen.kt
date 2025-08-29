@@ -68,7 +68,9 @@ import java.time.format.TextStyle
 
 @Composable
 fun SignUpScreen(navController: NavController) {
-    var text by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -118,24 +120,24 @@ fun SignUpScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(180.dp))
             OutlinedTextField(
                 modifier = Modifier.height(60.dp).width(350.dp),
-                value = text,
-                onValueChange = { text = it },
+                value = name,
+                onValueChange = { name = it },
                 shape = RoundedCornerShape(10.dp),
                 label = { Text("Name") }
             )
             Spacer(modifier = Modifier.height(20.dp))
             OutlinedTextField(
                 modifier = Modifier.height(60.dp).width(350.dp),
-                value = text,
-                onValueChange = { text = it },
+                value = email,
+                onValueChange = { email = it },
                 shape = RoundedCornerShape(10.dp),
                 label = { Text("Email") }
             )
             Spacer(modifier = Modifier.height(20.dp))
             OutlinedTextField(
                 modifier = Modifier.height(60.dp).width(350.dp),
-                value = text,
-                onValueChange = { text = it },
+                value = password,
+                onValueChange = { password = it },
                 shape = RoundedCornerShape(10.dp),
                 label = { Text("PassWord") }
             )
@@ -173,7 +175,9 @@ fun SignUpScreen(navController: NavController) {
             }
         }
         TextButton(
-            onClick = { },
+            onClick = {
+                navController.navigate(Screen.SignIn.route)
+            },
             shape = ButtonDefaults.shape,
             modifier = Modifier.offset(x = 270.dp, y = 840.dp).zIndex(1f)
         ) {
