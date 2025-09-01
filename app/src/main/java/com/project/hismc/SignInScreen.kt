@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
@@ -111,6 +113,39 @@ fun SignInScreen(navController: NavController) {
                     shape = RoundedCornerShape(20.dp),
                     label = {Text("email")}
                 )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ){
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                    .graphicsLayer(
+                        compositingStrategy = CompositingStrategy.ModulateAlpha
+                    )
+            ) {
+                rotate(degrees = -3f) {
+                    translate(left = -480f, top = 1200f) {
+                        drawCircle(Color(0xff40CEF2), radius = 110.dp.toPx())
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 300.dp, top = 700.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Back",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Medium
+
+                )
+
             }
         }
     }
