@@ -13,14 +13,6 @@ data class MealRow(
     val DDISH_NM: String? = ""
 )
 
-data class SchoolResponse(
-    val schoolInfo: List<SchoolInfo>? = emptyList()
-)
-
-data class SchoolInfo(
-    val row: List<SchoolRow>? = emptyList()
-)
-
 data class SchoolRow(
     val SCHUL_NM: String? = "",
     val ORG_RDNMA: String? = "",

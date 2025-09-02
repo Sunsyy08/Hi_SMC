@@ -20,7 +20,10 @@ fun HomeScreen(navController: NavController) {
     val today = java.time.LocalDate.now().toString().replace("-", "")
 
     LaunchedEffect(Unit) {
-        mealViewModel.loadMeal(today)
+        val officeCode = "B10" // 서울특별시교육청
+        val schoolCode = "7010537" // 예시 학교 코드
+        val mealCode = "2" // 중식
+
     }
 
     Box(modifier = Modifier.fillMaxSize()) {

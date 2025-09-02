@@ -7,14 +7,11 @@ object RetrofitInstance {
 
     private const val baseUrl = "https://open.neis.go.kr/hub/"
 
-    private val retrofit: Retrofit by lazy {
+    val api: MealInfoApi by lazy {
         Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
-
-    val api: MealInfoApi by lazy {
-        retrofit.create(MealInfoApi::class.java)
+            .create(MealInfoApi::class.java)
     }
 }

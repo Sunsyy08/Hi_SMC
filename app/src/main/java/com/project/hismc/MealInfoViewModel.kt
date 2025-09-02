@@ -16,13 +16,24 @@ class MealViewModel : ViewModel() {
     private val _schoolInfo = MutableStateFlow<SchoolRow?>(null)
     val schoolInfo: StateFlow<SchoolRow?> = _schoolInfo
 
-    fun loadMeal(date: String) {
+    /**
+     * 급식 정보 불러오기
+     * @param date yyyyMMdd 형식
+     * @param officeCode 교육청 코드, 예: "B10"
+     * @param schoolCode 학교 코드, 예: "7010569"
+     */
+    fun loadMeal(date: String, officeCode: String, schoolCode: String) {
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.getMealInfo(
                     key = "2a26cb17c9684fd8b29499fabe9a412c",
-                    date = date
+                    ATPT_OFCDC_SC_CODE = officeCode,
+                    SD_SCHUL_CODE = schoolCode,
+                    MLSV_YMD = date,
+                    Type = "json"
                 )
+
+                // null 안전하게 처리
                 val rows = response.mealServiceDietInfo
                     ?.getOrNull(1)
                     ?.row ?: emptyList()
