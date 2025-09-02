@@ -19,5 +19,8 @@ fun SMCNavHost(navController: NavHostController){
         composable(Screen.SignIn.route) {
             SignInScreen(navController = navController)
         }
+        composable(Screen.Home.route) {
+            HomeScreen(navController = navController)
+        }
     }
 }

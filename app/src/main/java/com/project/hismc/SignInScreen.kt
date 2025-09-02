@@ -178,7 +178,9 @@ fun SignInScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.width(12.dp))
             FloatingActionButton(
-                onClick = {  },
+                onClick = {
+                    navController.navigate(Screen.Home.route)
+                },
                 shape = CircleShape,
                 contentColor = Color(0xffffffff),
                 containerColor = Color(0xff000000),
