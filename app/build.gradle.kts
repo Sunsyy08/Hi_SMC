@@ -40,6 +40,9 @@ android {
 }
 
 dependencies {
+    val retrofitVersion = "3.0.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
 
     implementation("androidx.navigation:navigation-compose:2.9.3")
     implementation(libs.androidx.core.ktx)
