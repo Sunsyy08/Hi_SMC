@@ -40,6 +40,9 @@ android {
 }
 
 dependencies {
+
+    implementation ("com.google.accompanist:accompanist-pager:0.32.0")
+
     val retrofitVersion = "3.0.0"
     implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
