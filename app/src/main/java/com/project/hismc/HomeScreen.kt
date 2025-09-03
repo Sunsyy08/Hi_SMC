@@ -1,5 +1,6 @@
 package com.project.hismc
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,7 +26,11 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val pagerState = rememberPagerState(pageCount = {3})
+    val images = listOf(
+        R.drawable.smc_ms2,
+        R.drawable.smc_ms
+    )
+    val pagerState = rememberPagerState(pageCount = { images.size })
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
@@ -36,28 +42,27 @@ fun HomeScreen(navController: NavController) {
         ) {
                 HorizontalPager(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .wrapContentSize()
+                        .padding(26.dp),
                     state = pagerState,
-                ) { page ->
-                    val text = when (page) {
-                        0 -> "선혁"
-                        1 -> "선호"
-                        2 -> "개"
-                        else -> ""
-                    }
+                ) { currentPage ->
                     Card(
                         modifier = Modifier
+                            .wrapContentSize()
                             .clip(RoundedCornerShape(12.dp))
                             .height(220.dp)
                             .width(300.dp)
                             .padding(20.dp),
+                        elevation = CardDefaults.cardElevation(8.dp)
                     ) {
-                        Text(
-                            text = text,
-                            textAlign = TextAlign.Center,
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight.Normal
-                        )
+//                        Text(
+//                            text = text,
+//                            textAlign = TextAlign.Center,
+//                            fontSize = 30.sp,
+//                            fontWeight = FontWeight.Normal
+//                        )
+                        Image(painter = painterResource(id = images[currentPage]), contentDescription = "")
                     }
 
 //                Card(
