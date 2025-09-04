@@ -37,66 +37,43 @@ fun HomeScreen(navController: NavController) {
                 .padding(top = 100.dp, start = 50.dp)
                 .width(340.dp)
                 .height(250.dp)
-                .background(color = Color.White)
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .clip(RoundedCornerShape(10.dp))
                 .padding(8.dp),
         ) {
                 HorizontalPager(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentSize()
-                        .padding(26.dp),
+                        .padding(16.dp),
                     state = pagerState,
                 ) { currentPage ->
                     Card(
                         modifier = Modifier
                             .wrapContentSize()
                             .clip(RoundedCornerShape(12.dp))
-                            .height(220.dp)
-                            .width(300.dp)
-                            .padding(20.dp),
+                            .height(240.dp)
+                            .width(330.dp),
                         elevation = CardDefaults.cardElevation(8.dp)
                     ) {
-//                        Text(
-//                            text = text,
-//                            textAlign = TextAlign.Center,
-//                            fontSize = 30.sp,
-//                            fontWeight = FontWeight.Normal
-//                        )
                         Image(painter = painterResource(id = images[currentPage]), contentDescription = "")
                     }
-
-//                Card(
-//                    colors = CardDefaults.cardColors(
-//                        contentColor = MaterialTheme.colorScheme.surfaceVariant
-//                    ),
-//                    modifier = Modifier
-//                        .size(width = 120.dp, height = 100.dp)
-//                ) {
-//                    Text(
-//                        text = "선호",
-//                        color = Color.Black,
-//                        modifier = Modifier
-//                            .padding(16.dp),
-//                        textAlign = TextAlign.Center
-//                    )
-//                }
-//                Spacer(modifier = Modifier.height(22.dp))
-//                Card(
-//                    colors = CardDefaults.cardColors(
-//                        contentColor = MaterialTheme.colorScheme.surfaceVariant
-//                    ),
-//                    modifier = Modifier
-//                        .size(width = 120.dp, height = 100.dp)
-//                ) {
-//                    Text(
-//                        text = "선혁",
-//                        color = Color.Black,
-//                        modifier = Modifier
-//                            .padding(16.dp),
-//                        textAlign = TextAlign.Center
-//                    )
-//                }
             }
+        }
+        Box(
+            modifier = Modifier
+                .padding(top = 380.dp, start = 50.dp)
+                .width(340.dp)
+                .height(300.dp)
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(8.dp)
+                ),
+        ){
+
         }
     }
 }
