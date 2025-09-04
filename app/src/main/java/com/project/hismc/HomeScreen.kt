@@ -3,14 +3,21 @@ package com.project.hismc
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -32,6 +39,7 @@ fun HomeScreen(navController: NavController) {
     )
     val pagerState = rememberPagerState(pageCount = { images.size })
     Box(modifier = Modifier.fillMaxSize()) {
+        NavDrawer()
         Box(
             modifier = Modifier
                 .padding(top = 100.dp, start = 50.dp)
@@ -75,5 +83,55 @@ fun HomeScreen(navController: NavController) {
         ){
 
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NavDrawer(){
+    ModalNavigationDrawer(drawerContent = {
+        ModalDrawerSheet {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .height(200.dp)
+                        .background(color = Color(0xffffc107)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .wrapContentSize(),
+                        verticalArrangement = Arrangement.SpaceAround,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(painter = painterResource(id = R.drawable.smc_ms), contentDescription = "학교 마스코드",
+                            modifier = Modifier
+                                .size(130.dp)
+                                .clip(CircleShape)
+                        )
+                        Text(
+                            text = "Mr Park",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 16.dp),
+                            fontSize = 22.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .align (Alignment.BottomCenter), thickness = 1.dp,
+                        Color.DarkGray
+                    )
+                }
+            }
+        }
+    }) {
+
     }
 }

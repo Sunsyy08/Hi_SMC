@@ -41,6 +41,8 @@ android {
 
 dependencies {
 
+    implementation("androidx.compose.material3:material3:1.3.2")
+
     implementation ("com.google.accompanist:accompanist-pager:0.32.0")
 
     val retrofitVersion = "3.0.0"
