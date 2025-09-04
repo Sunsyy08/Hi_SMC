@@ -12,19 +12,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +47,7 @@ import androidx.navigation.NavController
 import com.project.hismc.data.DrawerItems
 import com.project.hismc.ui.theme.HismcTheme
 import com.project.hismc.viewmodel.MealViewModel
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @Composable
@@ -115,6 +122,8 @@ fun NavDrawer(content: @Composable () -> Unit) {
         DrawerItems(Icons.Default.Settings, "Setting", 0, false)
     )
     var selectedItem by remember { mutableStateOf(drawerItem[0]) }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -161,6 +170,7 @@ fun NavDrawer(content: @Composable () -> Unit) {
                             label = { Text(text = it.text) },
                             selected = it == selectedItem,
                             onClick = { selectedItem = it },
+                            modifier = Modifier.padding(horizontal = 20.dp),
                             icon = { Icon(imageVector = it.icon, contentDescription = it.text) },
                             badge = {
                                 if (it.hasBadge) {
@@ -174,6 +184,30 @@ fun NavDrawer(content: @Composable () -> Unit) {
                 }
             }
         },
-        content = { content() }
+        drawerState = drawerState,
+        content = {
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = { Text(text = "Drawer Menu") },
+                        navigationIcon = {
+                            IconButton(onClick = {
+                                scope.launch { drawerState.open() }
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "menu Icon"
+                                )
+                            }
+                        }
+                    )
+                }
+            ) { paddingValues ->
+                Box(modifier = Modifier.padding(paddingValues)) {
+                    content()
+                }
+            }
+        }
     )
 }
+
