@@ -189,7 +189,7 @@ fun NavDrawer(content: @Composable () -> Unit) {
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = "Drawer Menu") },
+                        title = { Text(text = "HI! SMC") },
                         navigationIcon = {
                             IconButton(onClick = {
                                 scope.launch { drawerState.open() }

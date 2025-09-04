@@ -167,12 +167,12 @@ fun SignInScreen(navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 100.dp, start = 220.dp),
-            verticalAlignment = Alignment.Bottom
+                .padding(top = 600.dp, start = 220.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Start",
-                fontSize = 26.sp,
+                fontSize = 30.sp,
                 modifier = Modifier,
                 fontWeight = FontWeight.Medium
             )
