@@ -136,7 +136,7 @@ fun NavDrawer(content: @Composable () -> Unit) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
-                            .background(color = Color(0xffffc107)),
+                            .background(color = Color(0xff40CEF2)),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(

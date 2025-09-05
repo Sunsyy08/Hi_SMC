@@ -138,7 +138,7 @@ fun SignInScreen(navController: NavController) {
             ) {
                 rotate(degrees = -3f) {
                     translate(left = -400f, top = 1150f) {
-                        drawCircle(Color(0xff40CEF2), radius = 110.dp.toPx())
+                            drawCircle(Color(0xff40CEF2), radius = 110.dp.toPx())
                     }
                 }
             }

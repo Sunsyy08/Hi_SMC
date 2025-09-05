@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,17 +56,22 @@ fun StartScreen(navController: NavController){
                 .width(400.dp)
                 .height(500.dp)
         )
+        Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
             navController.navigate(Screen.SignUp.route)
         },
             modifier = Modifier
-                .height(50.dp)
-                .width(100.dp),
+                .height(70.dp)
+                .width(140.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF00809D)
+                containerColor = Color(0xff40CEF2)
             )
         ) {
-            Text("시작하기")
+            Text(
+               text = "시작하기",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
