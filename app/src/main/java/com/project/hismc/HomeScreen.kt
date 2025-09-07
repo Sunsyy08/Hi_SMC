@@ -11,7 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.hismc.data.DrawerItems
 import kotlinx.coroutines.launch
 
@@ -37,7 +40,6 @@ fun HomeScreen(navController: NavController) {
 
     NavDrawer(navController = navController) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // 이미지 캐러셀
             Box(
                 modifier = Modifier
                     .padding(top = 100.dp, start = 50.dp)
@@ -69,8 +71,6 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
             }
-
-            // 아래 컨텐츠 박스
             Box(
                 modifier = Modifier
                     .padding(top = 380.dp, start = 50.dp)
@@ -94,15 +94,17 @@ fun NavDrawer(
     content: @Composable () -> Unit
 ) {
     val drawerItem = listOf(
-        DrawerItems(Icons.Default.Face, "Profile", 0, false, Screen.SignUp.route),
-        DrawerItems(Icons.Default.Email, "Inbox", 32, true, Screen.SignUp.route),
-        DrawerItems(Icons.Default.Favorite, "Favorite", 5, true, Screen.SignUp.route),
-        DrawerItems(Icons.Default.Settings, "Setting", 0, false, Screen.SignUp.route)
+        DrawerItems(Icons.Default.Home, "Home", 0, false, Screen.Home.route),
+        DrawerItems(Icons.Default.Person, "Profile", 0, false, Screen.Profile.route),
+//        DrawerItems(Icons.Default.Settings, "Setting", 0, false, Screen.Setting.route)
     )
 
-    var selectedItem by remember { mutableStateOf(drawerItem[0]) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    //  NavController 상태 감지
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -111,7 +113,6 @@ fun NavDrawer(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Drawer 상단 헤더
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -121,55 +122,43 @@ fun NavDrawer(
                     ) {
                         Column(
                             modifier = Modifier.wrapContentSize(),
-                            verticalArrangement = Arrangement.SpaceAround,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.smc_ms),
                                 contentDescription = "학교 마스코드",
                                 modifier = Modifier
-                                    .size(130.dp)
+                                    .size(120.dp)
                                     .clip(CircleShape)
                             )
                             Text(
                                 text = "Mr Park",
-                                modifier = Modifier.padding(top = 16.dp),
-                                fontSize = 22.sp,
-                                textAlign = TextAlign.Center
+                                modifier = Modifier.padding(top = 12.dp),
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center,
+                                color = Color.White
                             )
                         }
-                        Divider(
-                            modifier = Modifier.align(Alignment.BottomCenter),
-                            thickness = 1.dp,
-                            color = Color.DarkGray
-                        )
                     }
 
-                    // 메뉴 아이템 리스트
                     drawerItem.forEach { item ->
                         NavigationDrawerItem(
                             label = { Text(text = item.text) },
-                            selected = item == selectedItem,
+                            selected = currentRoute == item.route, // 현재 경로랑 비교해서 선택 상태 표시
                             onClick = {
-                                selectedItem = item
-                                scope.launch { drawerState.close() } // 닫기
-                                navController.navigate(item.page) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
+                                scope.launch { drawerState.close() }
+                                if (currentRoute != item.route) { // 같은 화면 중복 이동 방지
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
                             },
                             modifier = Modifier.padding(horizontal = 20.dp),
-                            icon = { Icon(imageVector = item.icon, contentDescription = item.text) },
-                            badge = {
-                                if (item.hasBadge) {
-                                    Badge {
-                                        Text(text = item.badgeCount.toString(), fontSize = 12.sp)
-                                    }
-                                }
-                            }
+                            icon = { Icon(imageVector = item.icon, contentDescription = item.text) }
                         )
                     }
                 }

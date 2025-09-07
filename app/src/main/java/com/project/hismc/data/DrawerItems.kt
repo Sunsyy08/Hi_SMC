@@ -8,5 +8,5 @@ data class DrawerItems(
     val text : String,
     val badgeCount : Int,
     val hasBadge : Boolean,
-    val page : String
+    val route : String
 )
