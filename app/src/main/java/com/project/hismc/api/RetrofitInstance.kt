@@ -4,12 +4,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-
-    private const val baseUrl = "https://open.neis.go.kr/hub/"
+    private const val BASE_URL = "https://open.neis.go.kr/hub/"
 
     val api: MealInfoApi by lazy {
         Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MealInfoApi::class.java)

@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.hismc.data.DrawerItems
@@ -38,8 +39,28 @@ fun HomeScreen(navController: NavController) {
     )
     val pagerState = rememberPagerState(pageCount = { images.size })
 
+    // ✅ ViewModel 가져오기
+    val mealViewModel: MealViewModel = viewModel()
+    val meals by mealViewModel.mealInfo.collectAsState()
+    val school by mealViewModel.schoolInfo.collectAsState()
+
+    // 오늘 날짜 (yyyyMMdd)
+    val today = remember { java.time.LocalDate.now().toString().replace("-", "") }
+
+    // ✅ 처음 화면 들어올 때 데이터 로드
+    LaunchedEffect(Unit) {
+        mealViewModel.loadMeal(
+            date = today,
+            officeCode = "B10",     // 서울특별시교육청 (학교에 맞게 바꿔야 함)
+            schoolCode = "7010537", // 세명컴퓨터고등학교 코드 (네 학교 코드 넣어야 함)
+            mealCode = "2"          // 1=조식, 2=중식, 3=석식
+        )
+        mealViewModel.loadSchoolInfo("B10", "7010537")
+    }
+
     NavDrawer(navController = navController) {
         Box(modifier = Modifier.fillMaxSize()) {
+            // 🔹 상단 이미지 캐러셀
             Box(
                 modifier = Modifier
                     .padding(top = 100.dp, start = 50.dp)
@@ -71,6 +92,8 @@ fun HomeScreen(navController: NavController) {
                     }
                 }
             }
+
+            // 🔹 아래쪽 급식 정보 박스
             Box(
                 modifier = Modifier
                     .padding(top = 380.dp, start = 50.dp)
@@ -79,13 +102,37 @@ fun HomeScreen(navController: NavController) {
                     .background(
                         color = Color.White,
                         shape = RoundedCornerShape(8.dp)
-                    ),
+                    )
+                    .padding(12.dp)
             ) {
+                Column {
+                    // 학교 정보
+                    school?.let {
+                        Text(text = "학교명: ${it.SCHUL_NM ?: "정보 없음"}")
+                        Text(text = "주소: ${it.ORG_RDNMA ?: "정보 없음"}")
+                        Text(text = "전화: ${it.ORG_TELNO ?: "정보 없음"}")
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
 
+                    // 급식 정보
+                    if (meals.isEmpty()) {
+                        Text(text = "오늘 급식 정보가 없습니다.")
+                    } else {
+                        meals.forEach { meal ->
+                            Text(text = "날짜: ${meal.MLSV_YMD ?: ""}")
+                            Text(
+                                text = meal.DDISH_NM?.replace("<br/>", "\n") ?: "",
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+                }
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
