@@ -3,10 +3,13 @@ package com.project.hismc
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.project.hismc.timetable.TimetableViewModel
@@ -25,7 +28,17 @@ fun TimetableScreen(navController: NavController, apiKey: String, viewModel: Tim
     }
 
     if (timetable.isEmpty()) {
-        Text("시간표를 불러오는 중...")
+        Row(
+            modifier = Modifier
+                .padding(top = 100.dp, start = 100.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                "시간표를 불러오는 중...",
+                fontWeight = FontWeight.Normal
+            )
+        }
         return
     }
 

@@ -157,19 +157,12 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier
                     .padding(top = 400.dp, start = 50.dp, end = 50.dp)
                     .fillMaxWidth()
-                    .height(400.dp),
+                    .height(300.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(8.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
-                Box(
-                    modifier = Modifier
-                        .height(400.dp),
-                    contentAlignment = Alignment.Center
-                ) {
 
-//                    Text("추가 기능 자리", fontSize = 18.sp, color = Color.Gray)
-                }
             }
         }
     }
