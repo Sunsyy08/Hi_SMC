@@ -21,8 +21,6 @@ interface TimetableApi {
     ): TimetableResponse
 }
 
-
-
 object TimetableRetrofit {
     val api: TimetableApi by lazy {
         Retrofit.Builder()

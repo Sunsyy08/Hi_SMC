@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
@@ -156,16 +157,17 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier
                     .padding(top = 400.dp, start = 50.dp, end = 50.dp)
                     .fillMaxWidth()
-                    .height(300.dp),
+                    .height(400.dp),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(8.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .height(400.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    TimetableScreen("df0ad9860d1c49618a5f8de265a5c621")
+
 //                    Text("추가 기능 자리", fontSize = 18.sp, color = Color.Gray)
                 }
             }
@@ -183,7 +185,7 @@ fun NavDrawer(
     val drawerItem = listOf(
         DrawerItems(Icons.Default.Home, "Home", 0, false, Screen.Home.route),
         DrawerItems(Icons.Default.Person, "Profile", 0, false, Screen.Profile.route),
-//        DrawerItems(Icons.Default.Settings, "Setting", 0, false, Screen.Setting.route)
+        DrawerItems(Icons.Default.DateRange, "시간표", 0, false, Screen.Timetable.route)
     )
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)

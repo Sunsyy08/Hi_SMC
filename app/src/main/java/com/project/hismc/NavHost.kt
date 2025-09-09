@@ -25,5 +25,10 @@ fun SMCNavHost(navController: NavHostController){
         composable(Screen.Profile.route) {
             ProfileScreen(navController = navController)
         }
+        composable(Screen.Timetable.route) {
+            TimetableScreen(
+                navController = navController,
+                apiKey = "df0ad9860d1c49618a5f8de265a5c621")
+        }
     }
 }
