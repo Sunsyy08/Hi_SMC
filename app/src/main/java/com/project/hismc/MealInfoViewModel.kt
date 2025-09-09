@@ -17,26 +17,23 @@ class MealViewModel : ViewModel() {
     private val _schoolInfo = MutableStateFlow<SchoolRow?>(null)
     val schoolInfo: StateFlow<SchoolRow?> = _schoolInfo
 
-    fun loadMeal(date: String, officeCode: String, schoolCode: String, mealCode: String = "2") {
+    fun loadMeal(date: String, officeCode: String, schoolCode: String, mealCode: String) {
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.getMealInfo(
                     key = "2a26cb17c9684fd8b29499fabe9a412c",
                     officeCode = officeCode,
                     schoolCode = schoolCode,
-                    mealCode = mealCode,
                     date = date
                 )
 
-                val rows = response.mealServiceDietInfo
+                val newMeals = response.mealServiceDietInfo
                     ?.getOrNull(1)
                     ?.row ?: emptyList()
 
-                Log.d("MealViewModel", "급식 불러오기 성공: ${rows.size}")
-                _mealInfo.value = rows
+                _mealInfo.value = _mealInfo.value + newMeals
             } catch (e: Exception) {
-                Log.e("MealViewModel", "급식 로드 실패", e)
-                _mealInfo.value = emptyList()
+                e.printStackTrace()
             }
         }
     }

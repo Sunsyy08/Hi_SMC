@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
@@ -32,102 +34,139 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.hismc.data.DrawerItems
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    val images = listOf(
-        R.drawable.smc_ms2,
-        R.drawable.smc_ms
-    )
-    val pagerState = rememberPagerState(pageCount = { images.size })
+    val pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 1)
 
-    //  ViewModel 가져오기
     val mealViewModel: MealViewModel = viewModel()
     val meals by mealViewModel.mealInfo.collectAsState()
     val school by mealViewModel.schoolInfo.collectAsState()
 
-    // 오늘 날짜 (yyyyMMdd)
-    val today = remember { java.time.LocalDate.now().toString().replace("-", "") }
+    val todayDate = LocalDate.now()
+    val dates = listOf(
+        todayDate.minusDays(1),
+        todayDate,
+        todayDate.plusDays(1)
+    )
 
-    //  처음 화면 들어올 때 데이터 로드
     LaunchedEffect(Unit) {
-        mealViewModel.loadMeal(
-            date = today,
-            officeCode = "B10",     // 서울특별시교육청 (학교에 맞게 바꿔야 함)
-            schoolCode = "7010537", // 세명컴퓨터고등학교 코드 (네 학교 코드 넣어야 함)
-            mealCode = "2"          // 1=조식, 2=중식, 3=석식
-        )
+        dates.forEach { date ->
+            mealViewModel.loadMeal(
+                date = date.toString().replace("-", ""),
+                officeCode = "B10",
+                schoolCode = "7010537",
+                mealCode = "2"
+            )
+        }
         mealViewModel.loadSchoolInfo("B10", "7010537")
     }
 
+    val dateFormatter = DateTimeFormatter.ofPattern("MM월 dd일")
+
     NavDrawer(navController = navController) {
         Box(modifier = Modifier.fillMaxSize()) {
+
+            // 학교 정보
             Row(
                 modifier = Modifier
                     .padding(top = 50.dp, start = 50.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 학교 정보
                 school?.let {
                     Text(
                         text = "학교명: ${it.SCHUL_NM ?: "정보 없음"}",
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Bold
                     )
-//                Text(text = "주소: ${it.ORG_RDNMA ?: "정보 없음"}")
-//                Text(text = "전화: ${it.ORG_TELNO ?: "정보 없음"}")
-                    Spacer(modifier = Modifier.height(10.dp))
                 }
             }
-            //  상단 이미지 캐러셀
-            Box(
+
+            // 상단 급식 카드
+            Card(
                 modifier = Modifier
-                    .padding(top = 100.dp, start = 50.dp)
-                    .width(340.dp)
-                    .height(250.dp)
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .clip(RoundedCornerShape(10.dp))
-                    .padding(8.dp),
+                    .padding(top = 100.dp, start = 50.dp, end = 50.dp)
+                    .fillMaxWidth()
+                    .height(250.dp),
+//                    .wrapContentHeight(), // ✅ 높이 자동 조절
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 HorizontalPager(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
                     state = pagerState,
-                ) { currentPage ->
-                    Column {
+                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                ) { page ->
+                    val date = dates[page]
+                    val formattedDate = date.format(dateFormatter)
+                    val mealsForDate = meals.filter { it.MLSV_YMD == date.toString().replace("-", "") }
 
-                        // 급식 정보
-                        if (meals.isEmpty()) {
-                            Text(text = "오늘 급식 정보가 없습니다.")
-                        } else {
-                            meals.forEach { meal ->
-                                Text(text = "날짜: ${meal.MLSV_YMD ?: ""}")
-                                Text(
-                                    text = meal.DDISH_NM?.replace("<br/>", "\n") ?: "",
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = formattedDate,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = Color(0xFF333333)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Box(modifier = Modifier.weight(1f)){
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .verticalScroll(rememberScrollState()),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                if (mealsForDate.isEmpty()) {
+                                    Text(
+                                        text = "급식 정보가 없습니다.",
+                                        fontSize = 16.sp,
+                                        color = Color.Gray
+                                    )
+                                } else {
+                                    mealsForDate.forEach { meal ->
+                                        // ✅ 영양 정보 제거 (괄호 안 숫자 삭제)
+                                        val cleanedMenu = meal.DDISH_NM
+                                            ?.replace("<br/>", "\n")
+                                            ?.replace(Regex("\\([^)]*\\)"), "")
+                                            ?.trim()
+
+                                        Text(
+                                            text = cleanedMenu ?: "",
+                                            fontSize = 16.sp,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.padding(vertical = 4.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
 
-            //  아래쪽 급식 정보 박스
-            Box(
+            // 아래쪽 카드
+            Card(
                 modifier = Modifier
-                    .padding(top = 380.dp, start = 50.dp)
-                    .width(340.dp)
-                    .height(300.dp)
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(12.dp)
+                    .padding(top = 400.dp, start = 50.dp, end = 50.dp)
+                    .fillMaxWidth()
+                    .height(300.dp),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
-
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("추가 기능 자리", fontSize = 18.sp, color = Color.Gray)
+                }
             }
         }
     }
