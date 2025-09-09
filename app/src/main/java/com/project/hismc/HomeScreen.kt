@@ -3,6 +3,7 @@ package com.project.hismc
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +41,7 @@ fun HomeScreen(navController: NavController) {
     )
     val pagerState = rememberPagerState(pageCount = { images.size })
 
-    // ✅ ViewModel 가져오기
+    //  ViewModel 가져오기
     val mealViewModel: MealViewModel = viewModel()
     val meals by mealViewModel.mealInfo.collectAsState()
     val school by mealViewModel.schoolInfo.collectAsState()
@@ -47,7 +49,7 @@ fun HomeScreen(navController: NavController) {
     // 오늘 날짜 (yyyyMMdd)
     val today = remember { java.time.LocalDate.now().toString().replace("-", "") }
 
-    // ✅ 처음 화면 들어올 때 데이터 로드
+    //  처음 화면 들어올 때 데이터 로드
     LaunchedEffect(Unit) {
         mealViewModel.loadMeal(
             date = today,
@@ -60,7 +62,24 @@ fun HomeScreen(navController: NavController) {
 
     NavDrawer(navController = navController) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // 🔹 상단 이미지 캐러셀
+            Row(
+                modifier = Modifier
+                    .padding(top = 50.dp, start = 50.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // 학교 정보
+                school?.let {
+                    Text(
+                        text = "학교명: ${it.SCHUL_NM ?: "정보 없음"}",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Normal
+                    )
+//                Text(text = "주소: ${it.ORG_RDNMA ?: "정보 없음"}")
+//                Text(text = "전화: ${it.ORG_TELNO ?: "정보 없음"}")
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
+            //  상단 이미지 캐러셀
             Box(
                 modifier = Modifier
                     .padding(top = 100.dp, start = 50.dp)
@@ -77,23 +96,26 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
                     state = pagerState,
                 ) { currentPage ->
-                    Card(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .clip(RoundedCornerShape(12.dp))
-                            .height(240.dp)
-                            .width(330.dp),
-                        elevation = CardDefaults.cardElevation(8.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = images[currentPage]),
-                            contentDescription = ""
-                        )
+                    Column {
+
+                        // 급식 정보
+                        if (meals.isEmpty()) {
+                            Text(text = "오늘 급식 정보가 없습니다.")
+                        } else {
+                            meals.forEach { meal ->
+                                Text(text = "날짜: ${meal.MLSV_YMD ?: ""}")
+                                Text(
+                                    text = meal.DDISH_NM?.replace("<br/>", "\n") ?: "",
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                        }
                     }
                 }
             }
 
-            // 🔹 아래쪽 급식 정보 박스
+            //  아래쪽 급식 정보 박스
             Box(
                 modifier = Modifier
                     .padding(top = 380.dp, start = 50.dp)
@@ -105,29 +127,7 @@ fun HomeScreen(navController: NavController) {
                     )
                     .padding(12.dp)
             ) {
-                Column {
-                    // 학교 정보
-                    school?.let {
-                        Text(text = "학교명: ${it.SCHUL_NM ?: "정보 없음"}")
-                        Text(text = "주소: ${it.ORG_RDNMA ?: "정보 없음"}")
-                        Text(text = "전화: ${it.ORG_TELNO ?: "정보 없음"}")
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
 
-                    // 급식 정보
-                    if (meals.isEmpty()) {
-                        Text(text = "오늘 급식 정보가 없습니다.")
-                    } else {
-                        meals.forEach { meal ->
-                            Text(text = "날짜: ${meal.MLSV_YMD ?: ""}")
-                            Text(
-                                text = meal.DDISH_NM?.replace("<br/>", "\n") ?: "",
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    }
-                }
             }
         }
     }
