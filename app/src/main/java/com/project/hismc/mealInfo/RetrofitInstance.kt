@@ -1,4 +1,4 @@
-package com.project.hismc.api
+package com.project.hismc.mealInfo
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

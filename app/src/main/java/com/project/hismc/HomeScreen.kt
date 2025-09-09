@@ -165,7 +165,8 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("추가 기능 자리", fontSize = 18.sp, color = Color.Gray)
+                    TimetableScreen("df0ad9860d1c49618a5f8de265a5c621")
+//                    Text("추가 기능 자리", fontSize = 18.sp, color = Color.Gray)
                 }
             }
         }

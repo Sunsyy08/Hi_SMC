@@ -1,4 +1,4 @@
-package com.project.hismc.api
+package com.project.hismc.mealInfo
 
 // 급식 응답 모델
 data class MealResponse(
