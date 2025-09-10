@@ -26,8 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -90,7 +93,8 @@ fun HomeScreen(navController: NavController) {
                 modifier = Modifier
                     .padding(top = 100.dp, start = 50.dp, end = 50.dp)
                     .fillMaxWidth()
-                    .height(250.dp),
+                    .height(250.dp)
+                    .align(Alignment.TopCenter),
 //                    .wrapContentHeight(), // ✅ 높이 자동 조절
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(8.dp),
@@ -98,52 +102,85 @@ fun HomeScreen(navController: NavController) {
             ) {
                 HorizontalPager(
                     state = pagerState,
-                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp) // ✅ 카드 높이 고정
                 ) { page ->
                     val date = dates[page]
                     val formattedDate = date.format(dateFormatter)
-                    val mealsForDate = meals.filter { it.MLSV_YMD == date.toString().replace("-", "") }
 
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    // 오늘 / 어제 / 내일 표시
+                    val label = when (page) {
+                        0 -> "어제"
+                        1 -> "오늘"
+                        2 -> "내일"
+                        else -> ""
+                    }
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                            .padding(horizontal = 16.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(8.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
                     ) {
-                        Text(
-                            text = formattedDate,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            color = Color(0xFF333333)
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            // 날짜 + 라벨
+                            Text(
+                                buildAnnotatedString {
+                                    append(formattedDate)
+                                    append("  ")
+                                    withStyle(SpanStyle(color = Color(0xFF1976D2), fontWeight = FontWeight.Bold)) {
+                                        append(label)
+                                    }
+                                },
+                                fontSize = 18.sp
+                            )
 
-                        Box(modifier = Modifier.weight(1f)){
-                            Column(
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            val mealsForDate = meals.filter { it.MLSV_YMD == date.toString().replace("-", "") }
+
+                            Box(
                                 modifier = Modifier
+                                    .weight(1f) // ✅ 내용 부족 시에도 카드 높이 유지
                                     .fillMaxWidth()
-                                    .verticalScroll(rememberScrollState()),
-                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 if (mealsForDate.isEmpty()) {
                                     Text(
                                         text = "급식 정보가 없습니다.",
                                         fontSize = 16.sp,
-                                        color = Color.Gray
+                                        color = Color.Gray,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.align(Alignment.Center)
                                     )
                                 } else {
-                                    mealsForDate.forEach { meal ->
-                                        // ✅ 영양 정보 제거 (괄호 안 숫자 삭제)
-                                        val cleanedMenu = meal.DDISH_NM
-                                            ?.replace("<br/>", "\n")
-                                            ?.replace(Regex("\\([^)]*\\)"), "")
-                                            ?.trim()
-
-                                        Text(
-                                            text = cleanedMenu ?: "",
-                                            fontSize = 16.sp,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.padding(vertical = 4.dp)
-                                        )
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .verticalScroll(rememberScrollState()),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        mealsForDate.forEach { meal ->
+                                            val cleanedMenu = meal.DDISH_NM
+                                                ?.replace("<br/>", "\n")
+                                                ?.replace(Regex("\\([^)]*\\)"), "")
+                                                ?.trim()
+                                            Text(
+                                                text = cleanedMenu ?: "",
+                                                fontSize = 16.sp,
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.padding(vertical = 4.dp)
+                                            )
+                                        }
                                     }
                                 }
                             }
