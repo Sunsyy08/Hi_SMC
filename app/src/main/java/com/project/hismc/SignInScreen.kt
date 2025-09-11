@@ -1,36 +1,16 @@
 package com.project.hismc
 
-import android.R.attr.text
+import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +18,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -45,57 +26,69 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.project.hismc.auth.AuthRequest
+import com.project.hismc.auth.AuthRepository
+import com.project.hismc.auth.AuthResponse
+import com.project.hismc.auth.AuthViewModel
 import com.project.hismc.ui.theme.HismcTheme
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 @Composable
 fun SignInScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
+    var grade by remember { mutableStateOf("") }
+    var classNo by remember { mutableStateOf("") }
+    var studentNo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+
+    val authViewModel: AuthViewModel = viewModel()
+
+    // 학번(studentId) 생성
+    fun generateStudentId(grade: String, classNo: String, studentNo: String): String {
+        val classStr = classNo.padStart(2, '0')
+        val numStr = studentNo.padStart(2, '0')
+        return grade + classStr + numStr
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-    ){
-        Box(
-            modifier = Modifier
-            .fillMaxSize()
-        ){
+    ) {
+        // 상단 원, 이미지, 타이틀
+        Box(modifier = Modifier.fillMaxSize()) {
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
                     .statusBarsPadding()
-                    .graphicsLayer(
-                        compositingStrategy = CompositingStrategy.ModulateAlpha
-                    )
+                    .graphicsLayer(compositingStrategy = CompositingStrategy.ModulateAlpha)
             ) {
-                translate(left = -80f, top = -1000f, ) {
+                translate(left = -80f, top = -1000f) {
                     drawCircle(Color(0xff40CEF2), radius = 350.dp.toPx())
-                    RoundedCornerShape(400.dp)
                 }
             }
             Image(
                 painter = painterResource(id = R.drawable.smc_ms2),
                 contentDescription = "학교 마스코드",
-                modifier = Modifier
-                    .size(300.dp)
-                    .offset(x = (170.dp), y = (30.dp))
+                modifier = Modifier.size(300.dp).offset(x = 170.dp, y = 30.dp)
             )
             Text(
                 text = "Sign In",
-                fontSize = (60.sp),
+                fontSize = 60.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.White,
-                modifier = Modifier
-                    .offset(x = (30).dp, y = (260).dp),
+                modifier = Modifier.offset(x = 30.dp, y = 260.dp)
             )
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ){
+
+        // 로그인 입력란
+        Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -104,41 +97,50 @@ fun SignInScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OutlinedTextField(
-                    modifier = Modifier
-                        .height(60.dp)
-                        .width(350.dp),
-                    value = email,
-                    onValueChange = {email = it},
+                    modifier = Modifier.height(60.dp).width(350.dp),
+                    value = grade,
+                    onValueChange = { grade = it },
                     shape = RoundedCornerShape(20.dp),
-                    label = {Text("email")}
+                    label = { Text("학년") }
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
-                    modifier = Modifier
-                        .height(60.dp)
-                        .width(350.dp),
-                    value = password,
-                    onValueChange = {password = it},
+                    modifier = Modifier.height(60.dp).width(350.dp),
+                    value = classNo,
+                    onValueChange = { classNo = it },
                     shape = RoundedCornerShape(20.dp),
-                    label = {Text("email")}
+                    label = { Text("반") }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    modifier = Modifier.height(60.dp).width(350.dp),
+                    value = studentNo,
+                    onValueChange = { studentNo = it },
+                    shape = RoundedCornerShape(20.dp),
+                    label = { Text("번호") }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    modifier = Modifier.height(60.dp).width(350.dp),
+                    value = password,
+                    onValueChange = { password = it },
+                    shape = RoundedCornerShape(20.dp),
+                    label = { Text("비밀번호") }
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ){
+
+        // 하단 원, Back 버튼
+        Box(modifier = Modifier.fillMaxSize()) {
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
                     .statusBarsPadding()
-                    .graphicsLayer(
-                        compositingStrategy = CompositingStrategy.ModulateAlpha
-                    )
+                    .graphicsLayer(compositingStrategy = CompositingStrategy.ModulateAlpha)
             ) {
                 rotate(degrees = -3f) {
                     translate(left = -400f, top = 1150f) {
-                            drawCircle(Color(0xff40CEF2), radius = 110.dp.toPx())
+                        drawCircle(Color(0xff40CEF2), radius = 110.dp.toPx())
                     }
                 }
             }
@@ -149,9 +151,7 @@ fun SignInScreen(navController: NavController) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 TextButton(
-                    onClick = {
-                        navController.navigate(Screen.SignUp.route)
-                    },
+                    onClick = { navController.navigate(Screen.SignUp.route) },
                     shape = ButtonDefaults.shape
                 ) {
                     Text(
@@ -164,6 +164,8 @@ fun SignInScreen(navController: NavController) {
                 }
             }
         }
+
+        // Start 버튼 + 서버 로그인
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -173,19 +175,39 @@ fun SignInScreen(navController: NavController) {
             Text(
                 text = "Start",
                 fontSize = 30.sp,
-                modifier = Modifier,
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.width(12.dp))
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.Home.route)
+                    val request = AuthRequest(
+                        grade = grade,  // 필요시 학년/반/번호 합쳐서 studentId로
+                        classNo = classNo,
+                        studentNo = studentNo,
+                        password = password
+                    )
+
+                    AuthRepository.api.login(request).enqueue(object : Callback<AuthResponse> {
+                        override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
+                            val res = response.body()
+                            if (res != null && res.success) {
+                                Toast.makeText(context, "로그인 성공! 토큰: ${res.token}", Toast.LENGTH_SHORT).show()
+                                navController.navigate(Screen.Home.route)
+                            } else {
+                                Toast.makeText(context, res?.message ?: "로그인 실패", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
+                            Toast.makeText(context, "서버 오류: ${t.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                    authViewModel.login(request)
                 },
                 shape = CircleShape,
-                contentColor = Color(0xffffffff),
-                containerColor = Color(0xff000000),
-                modifier = Modifier
-                    .size(50.dp),
+                contentColor = Color.White,
+                containerColor = Color.Black,
+                modifier = Modifier.size(50.dp),
             ) {
                 Icon(Icons.Filled.ArrowForward, "Large floating action button")
             }
@@ -195,8 +217,8 @@ fun SignInScreen(navController: NavController) {
 
 @Preview(showBackground = true)
 @Composable
-fun Preview(){
-    HismcTheme { 
+fun PreviewSignIn() {
+    HismcTheme {
         SignInScreen(navController = rememberNavController())
     }
 }
