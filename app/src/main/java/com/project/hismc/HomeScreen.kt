@@ -3,34 +3,25 @@ package com.project.hismc
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,12 +40,14 @@ fun HomeScreen(navController: NavController) {
     val meals by mealViewModel.mealInfo.collectAsState()
     val school by mealViewModel.schoolInfo.collectAsState()
 
+    // 컬러 팔레트
+    val primaryBlue = Color(0xFF1E3A8A)
+    val accentBlue = Color(0xFF3B82F6)
+    val lightBlue = Color(0xFFDBEAFE)
+    val textDark = Color(0xFF1F2937)
+
     val todayDate = LocalDate.now()
-    val dates = listOf(
-        todayDate.minusDays(1),
-        todayDate,
-        todayDate.plusDays(1)
-    )
+    val dates = listOf(todayDate.minusDays(1), todayDate, todayDate.plusDays(1))
 
     LaunchedEffect(Unit) {
         dates.forEach { date ->
@@ -70,116 +63,103 @@ fun HomeScreen(navController: NavController) {
 
     val dateFormatter = DateTimeFormatter.ofPattern("MM월 dd일")
 
-    NavDrawer(navController = navController) {
-        Box(modifier = Modifier.fillMaxSize()) {
-
-            // 학교 정보
-            Row(
-                modifier = Modifier
-                    .padding(top = 50.dp, start = 50.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                school?.let {
-                    Text(
-                        text = "학교명: ${it.SCHUL_NM ?: "정보 없음"}",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+    NavDrawer(navController = navController, schoolName = school?.SCHUL_NM ?: "학교 정보 로딩 중...") {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(lightBlue, Color.White, lightBlue.copy(alpha = 0.3f))
                     )
-                }
-            }
-
-            // 상단 급식 카드
-            Card(
+                )
+        ) {
+            Column(
                 modifier = Modifier
-                    .padding(top = 100.dp, start = 50.dp, end = 50.dp)
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .align(Alignment.TopCenter),
-//                    .wrapContentHeight(), // ✅ 높이 자동 조절
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                HorizontalPager(
-                    state = pagerState,
+                // 급식 메뉴 제목
+                Text(
+                    text = "🍽️ 급식 메뉴",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = primaryBlue,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                // 급식 카드 슬라이더
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(220.dp) // ✅ 카드 높이 고정
-                ) { page ->
-                    val date = dates[page]
-                    val formattedDate = date.format(dateFormatter)
+                        .height(400.dp), // 높이 늘려서 스크롤 최소화
+                    shape = RoundedCornerShape(24.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxSize()
+                    ) { page ->
+                        val date = dates[page]
+                        val formattedDate = date.format(dateFormatter)
 
-                    // 오늘 / 어제 / 내일 표시
-                    val label = when (page) {
-                        0 -> "어제"
-                        1 -> "오늘"
-                        2 -> "내일"
-                        else -> ""
-                    }
+                        val mealsForDate = meals.filter { it.MLSV_YMD == date.toString().replace("-", "") }
 
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(220.dp)
-                            .padding(horizontal = 16.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White)
-                    ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                                .padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            // 날짜 + 라벨
+                            // 날짜 헤더
                             Text(
-                                buildAnnotatedString {
-                                    append(formattedDate)
-                                    append("  ")
-                                    withStyle(SpanStyle(color = Color(0xFF1976D2), fontWeight = FontWeight.Bold)) {
-                                        append(label)
-                                    }
-                                },
-                                fontSize = 18.sp
+                                text = "$formattedDate (${when (page) {
+                                    0 -> "어제"
+                                    1 -> "오늘"
+                                    2 -> "내일"
+                                    else -> ""
+                                }})",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = primaryBlue,
+                                modifier = Modifier.padding(bottom = 12.dp)
                             )
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                            // 메뉴 리스트
+                            if (mealsForDate.isEmpty()) {
+                                Text("급식 정보가 없습니다", color = Color.Gray)
+                            } else {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    mealsForDate.forEach { meal ->
+                                        val cleanedMenu = meal.DDISH_NM
+                                            ?.replace("<br/>", "\n")
+                                            ?.replace(Regex("\\([^)]*\\)"), "")
+                                            ?.trim()
+                                            ?.split("\n")
 
-                            val mealsForDate = meals.filter { it.MLSV_YMD == date.toString().replace("-", "") }
-
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f) // ✅ 내용 부족 시에도 카드 높이 유지
-                                    .fillMaxWidth()
-                            ) {
-                                if (mealsForDate.isEmpty()) {
-                                    Text(
-                                        text = "급식 정보가 없습니다.",
-                                        fontSize = 16.sp,
-                                        color = Color.Gray,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.align(Alignment.Center)
-                                    )
-                                } else {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .verticalScroll(rememberScrollState()),
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        mealsForDate.forEach { meal ->
-                                            val cleanedMenu = meal.DDISH_NM
-                                                ?.replace("<br/>", "\n")
-                                                ?.replace(Regex("\\([^)]*\\)"), "")
-                                                ?.trim()
-                                            Text(
-                                                text = cleanedMenu ?: "",
-                                                fontSize = 16.sp,
-                                                textAlign = TextAlign.Center,
-                                                modifier = Modifier.padding(vertical = 4.dp)
-                                            )
+                                        cleanedMenu?.forEach { menuItem ->
+                                            if (menuItem.isNotBlank()) {
+                                                Card(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    shape = RoundedCornerShape(8.dp),
+                                                    colors = CardDefaults.cardColors(
+                                                        containerColor = lightBlue.copy(alpha = 0.2f)
+                                                    )
+                                                ) {
+                                                    Text(
+                                                        text = menuItem.trim(),
+                                                        fontSize = 14.sp,
+                                                        textAlign = TextAlign.Center,
+                                                        color = textDark,
+                                                        modifier = Modifier.padding(6.dp)
+                                                    )
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -187,29 +167,34 @@ fun HomeScreen(navController: NavController) {
                         }
                     }
                 }
-            }
 
-            // 아래쪽 카드
-            Card(
-                modifier = Modifier
-                    .padding(top = 400.dp, start = 50.dp, end = 50.dp)
-                    .fillMaxWidth()
-                    .height(300.dp),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
-
+                // 페이지 인디케이터
+                Row(
+                    modifier = Modifier.padding(top = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    repeat(3) { index ->
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (pagerState.currentPage == index) accentBlue
+                                    else Color.Gray.copy(alpha = 0.3f)
+                                )
+                        )
+                    }
+                }
             }
         }
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavDrawer(
     navController: NavController,
+    schoolName: String,
     content: @Composable () -> Unit
 ) {
     val drawerItem = listOf(
@@ -221,7 +206,6 @@ fun NavDrawer(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    //  NavController 상태 감지
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -263,10 +247,10 @@ fun NavDrawer(
                     drawerItem.forEach { item ->
                         NavigationDrawerItem(
                             label = { Text(text = item.text) },
-                            selected = currentRoute == item.route, // 현재 경로랑 비교해서 선택 상태 표시
+                            selected = currentRoute == item.route,
                             onClick = {
                                 scope.launch { drawerState.close() }
-                                if (currentRoute != item.route) { // 같은 화면 중복 이동 방지
+                                if (currentRoute != item.route) {
                                     navController.navigate(item.route) {
                                         popUpTo(navController.graph.startDestinationId) {
                                             saveState = true
@@ -288,7 +272,12 @@ fun NavDrawer(
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text(text = "HI! SMC") },
+                        title = {
+                            Text(
+                                text = schoolName,
+                                fontWeight = FontWeight.Bold
+                            )
+                        },
                         navigationIcon = {
                             IconButton(onClick = {
                                 scope.launch { drawerState.open() }

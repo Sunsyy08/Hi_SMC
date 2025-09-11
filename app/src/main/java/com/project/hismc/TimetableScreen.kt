@@ -100,7 +100,7 @@ fun TimetableScreen(navController: NavController, apiKey: String, viewModel: Tim
     // 최소 7교시까지 표시
     val maxPeriods = maxOf(processedTable.values.maxOfOrNull { it.size } ?: 0, 7)
 
-    NavDrawer(navController = navController) {
+    NavDrawer(navController = navController, schoolName = "세명컴퓨터고등학교") {
         Box(
             modifier = Modifier
                 .fillMaxSize()

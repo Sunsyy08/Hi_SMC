@@ -6,7 +6,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun ProfileScreen(navController: NavController) {
-    NavDrawer(navController = navController) {
+    NavDrawer(navController = navController,schoolName = "세명컴퓨터고등학교") {
 
     }
 }
