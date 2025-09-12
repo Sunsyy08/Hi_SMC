@@ -1,13 +1,14 @@
 package com.project.hismc.auth
 
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthApi {
     @POST("api/auth/signup")
-    fun signup(@Body request: AuthRequest): Call<AuthResponse>
+    suspend fun signup(@Body request: AuthRequest): Response<AuthResponse>
 
     @POST("api/auth/login")
-    fun login(@Body request: AuthRequest): Call<AuthResponse>
+    suspend fun login(@Body request: LoginRequest): Response<AuthResponse>
 }

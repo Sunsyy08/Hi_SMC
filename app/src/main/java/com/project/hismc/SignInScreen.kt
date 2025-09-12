@@ -33,7 +33,9 @@ import com.project.hismc.auth.AuthRequest
 import com.project.hismc.auth.AuthRepository
 import com.project.hismc.auth.AuthResponse
 import com.project.hismc.auth.AuthViewModel
+import com.project.hismc.auth.LoginRequest
 import com.project.hismc.ui.theme.HismcTheme
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -48,6 +50,7 @@ fun SignInScreen(navController: NavController) {
     val context = LocalContext.current
 
     val authViewModel: AuthViewModel = viewModel()
+    val coroutineScope = rememberCoroutineScope()
 
     // 학번(studentId) 생성
     fun generateStudentId(grade: String, classNo: String, studentNo: String): String {
@@ -180,28 +183,33 @@ fun SignInScreen(navController: NavController) {
             Spacer(modifier = Modifier.width(12.dp))
             FloatingActionButton(
                 onClick = {
-                    val request = AuthRequest(
-                        grade = grade,  // 필요시 학년/반/번호 합쳐서 studentId로
-                        classNo = classNo,
-                        studentNo = studentNo,
+                    if (grade.isBlank() || classNo.isBlank() || studentNo.isBlank() || password.isBlank()) {
+                        Toast.makeText(context, "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                        return@FloatingActionButton
+                    }
+
+                    // ✅ 학번 생성
+                    val studentId = generateStudentId(grade, classNo, studentNo)
+
+                    // ✅ 로그인 요청 객체 (LoginRequest 사용)
+                    val request = LoginRequest(
+                        studentId = studentId,
                         password = password
                     )
 
-                    AuthRepository.api.login(request).enqueue(object : Callback<AuthResponse> {
-                        override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
-                            val res = response.body()
-                            if (res != null && res.success) {
-                                Toast.makeText(context, "로그인 성공! 토큰: ${res.token}", Toast.LENGTH_SHORT).show()
+                    coroutineScope.launch {
+                        try {
+                            val response = AuthRepository.api.login(request)
+                            if (response.isSuccessful && response.body()?.success == true) {
+                                Toast.makeText(context, "로그인 성공! 토큰: ${response.body()?.token}", Toast.LENGTH_SHORT).show()
                                 navController.navigate(Screen.Home.route)
                             } else {
-                                Toast.makeText(context, res?.message ?: "로그인 실패", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, response.body()?.message ?: "로그인 실패", Toast.LENGTH_SHORT).show()
                             }
+                        } catch (e: Exception) {
+                            Toast.makeText(context, "서버 오류: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
-
-                        override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                            Toast.makeText(context, "서버 오류: ${t.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    })
+                    }
                     authViewModel.login(request)
                 },
                 shape = CircleShape,
@@ -209,11 +217,12 @@ fun SignInScreen(navController: NavController) {
                 containerColor = Color.Black,
                 modifier = Modifier.size(50.dp),
             ) {
-                Icon(Icons.Filled.ArrowForward, "Large floating action button")
+                Icon(Icons.Filled.ArrowForward, "로그인 버튼")
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

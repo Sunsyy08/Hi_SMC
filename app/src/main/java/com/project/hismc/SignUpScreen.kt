@@ -36,9 +36,7 @@ import com.project.hismc.auth.AuthRepository
 import com.project.hismc.auth.AuthResponse
 import com.project.hismc.auth.AuthViewModel
 import com.project.hismc.ui.theme.HismcTheme
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(navController: NavController) {
@@ -48,11 +46,11 @@ fun SignUpScreen(navController: NavController) {
     var studentNo by remember { mutableStateOf("") }
     var major by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var hasTriedSignUp by remember { mutableStateOf(false) } // 회원가입 시도 여부만 체크
 
     val context = LocalContext.current
     val authViewModel: AuthViewModel = viewModel()
     val sharedPref = context.getSharedPreferences("MyAppPref", Context.MODE_PRIVATE)
+    val coroutineScope = rememberCoroutineScope()
 
     // studentId 생성 함수
     fun generateStudentId(grade: String, classNo: String, studentNo: String): String {
@@ -63,14 +61,12 @@ fun SignUpScreen(navController: NavController) {
 
     // 회원가입 함수
     fun performSignUp() {
-        // 입력값 검증
         if (name.isBlank() || grade.isBlank() || classNo.isBlank() ||
-            studentNo.isBlank() || major.isBlank() || password.isBlank()) {
+            studentNo.isBlank() || major.isBlank() || password.isBlank()
+        ) {
             Toast.makeText(context, "모든 필드를 입력해주세요.", Toast.LENGTH_SHORT).show()
             return
         }
-
-        hasTriedSignUp = true // 회원가입 시도 표시
 
         val request = AuthRequest(
             grade = grade,
@@ -81,30 +77,32 @@ fun SignUpScreen(navController: NavController) {
             password = password
         )
 
-        AuthRepository.api.signup(request).enqueue(object : Callback<AuthResponse> {
-            override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
-                Log.d("AuthDebug", "요청 데이터: $request")
-                Log.d("AuthDebug", "응답 코드: ${response.code()}")
-                Log.d("AuthDebug", "응답 원본: ${response.raw()}")
+        coroutineScope.launch {
+            try {
+                val response = AuthRepository.api.signup(request)
+                Log.d("AuthDebug", "HTTP 코드: ${response.code()}")
                 Log.d("AuthDebug", "응답 바디: ${response.body()}")
 
                 val res = response.body()
-                if (res != null && res.success) {
-                    // 회원가입 완료 표시
+                if (response.isSuccessful && res != null && res.success) {
                     sharedPref.edit().putBoolean("isSignedUp", true).apply()
-                    Toast.makeText(context, "회원가입 완료! Sign In 버튼을 눌러주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "회원가입 완료! 이제 Sign In 버튼을 눌러주세요.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
-                    Toast.makeText(context, res?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
-                    hasTriedSignUp = false // 실패하면 다시 시도할 수 있게
+                    Toast.makeText(
+                        context,
+                        res?.message ?: "회원가입 실패",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
+            } catch (e: Exception) {
+                Log.e("AuthDebug", "서버 오류: ${e.message}", e)
+                Toast.makeText(context, "서버 오류: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-
-            override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
-                Log.e("AuthDebug", "네트워크 오류", t)
-                Toast.makeText(context, "서버 오류: ${t.message}", Toast.LENGTH_SHORT).show()
-                hasTriedSignUp = false // 실패하면 다시 시도할 수 있게
-            }
-        })
+        }
 
         authViewModel.signup(request)
     }
@@ -114,6 +112,7 @@ fun SignUpScreen(navController: NavController) {
             .fillMaxSize()
             .background(Color.White)
     ) {
+        // 상단 배경 원
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
@@ -224,6 +223,7 @@ fun SignUpScreen(navController: NavController) {
             }
         }
 
+        // 하단 배경 원
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
@@ -237,21 +237,19 @@ fun SignUpScreen(navController: NavController) {
             }
         }
 
-        // Sign In 버튼: 간단하게 처리
+        // Sign In 버튼 (보조용)
         TextButton(
             onClick = {
-                // 모든 필드가 채워져 있다면 로그인 화면으로 이동
                 if (name.isNotBlank() && grade.isNotBlank() && classNo.isNotBlank() &&
-                    studentNo.isNotBlank() && major.isNotBlank() && password.isNotBlank()) {
-
-                    if (!hasTriedSignUp) {
-                        Toast.makeText(context, "먼저 화살표 버튼을 눌러 회원가입을 해주세요.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        // 회원가입을 시도했다면 로그인 화면으로 이동
-                        navController.navigate(Screen.SignIn.route)
-                    }
+                    studentNo.isNotBlank() && major.isNotBlank() && password.isNotBlank()
+                ) {
+                    navController.navigate(Screen.SignIn.route)
                 } else {
-                    Toast.makeText(context, "모든 정보를 입력하고 회원가입을 완료해주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "모든 정보를 입력하고 회원가입을 완료해주세요.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             },
             shape = ButtonDefaults.shape,
