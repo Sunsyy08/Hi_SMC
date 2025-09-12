@@ -1,12 +1,18 @@
 package com.project.hismc.auth
 
-// 요청
+// 회원가입용 요청 (서버에서 받는 필드와 정확히 맞춤)
 data class AuthRequest(
     val grade: String,
     val classNo: String,
     val studentNo: String,
-    val name: String? = null,  // 회원가입 때만 필요
-    val major: String? = null, // 회원가입 때만 필요
+    val name: String,
+    val major: String,
+    val password: String
+)
+
+// 로그인용 요청
+data class LoginRequest(
+    val studentId: String,
     val password: String
 )
 

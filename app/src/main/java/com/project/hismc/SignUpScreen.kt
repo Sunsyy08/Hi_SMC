@@ -59,8 +59,18 @@ fun SignUpScreen(navController: NavController) {
         return grade + classStr + numStr
     }
 
+    LaunchedEffect(authViewModel.token) {
+        if (authViewModel.token != null) {
+            // 회원가입 성공시 로그인 페이지로 이동
+            navController.navigate(Screen.SignIn.route)
+        }
+    }
+
+    // SignUpScreen.kt의 performSignUp 함수를 이렇게 수정하세요
     // 회원가입 함수
     fun performSignUp() {
+        Log.d("SignUp", "회원가입 버튼 클릭됨")
+
         if (name.isBlank() || grade.isBlank() || classNo.isBlank() ||
             studentNo.isBlank() || major.isBlank() || password.isBlank()
         ) {
@@ -69,42 +79,16 @@ fun SignUpScreen(navController: NavController) {
         }
 
         val request = AuthRequest(
-            grade = grade,
-            classNo = classNo,
-            studentNo = studentNo,
-            name = name,
-            major = major,
-            password = password
+            grade = grade.trim(),
+            classNo = classNo.trim(),
+            studentNo = studentNo.trim(),
+            name = name.trim(),
+            major = major.trim(),
+            password = password.trim()
         )
 
-        coroutineScope.launch {
-            try {
-                val response = AuthRepository.api.signup(request)
-                Log.d("AuthDebug", "HTTP 코드: ${response.code()}")
-                Log.d("AuthDebug", "응답 바디: ${response.body()}")
-
-                val res = response.body()
-                if (response.isSuccessful && res != null && res.success) {
-                    sharedPref.edit().putBoolean("isSignedUp", true).apply()
-                    Toast.makeText(
-                        context,
-                        "회원가입 완료! 이제 Sign In 버튼을 눌러주세요.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(
-                        context,
-                        res?.message ?: "회원가입 실패",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } catch (e: Exception) {
-                Log.e("AuthDebug", "서버 오류: ${e.message}", e)
-                Toast.makeText(context, "서버 오류: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        authViewModel.signup(request)
+        Log.d("SignUp", "ViewModel을 통한 회원가입 요청: $request")
+        authViewModel.signup(request)  // ✅ ViewModel만 사용
     }
 
     Box(
