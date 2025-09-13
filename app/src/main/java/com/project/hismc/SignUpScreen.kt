@@ -32,11 +32,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.hismc.auth.AuthRequest
-import com.project.hismc.auth.AuthRepository
-import com.project.hismc.auth.AuthResponse
 import com.project.hismc.auth.AuthViewModel
 import com.project.hismc.ui.theme.HismcTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(navController: NavController) {
@@ -49,24 +46,14 @@ fun SignUpScreen(navController: NavController) {
 
     val context = LocalContext.current
     val authViewModel: AuthViewModel = viewModel()
-    val sharedPref = context.getSharedPreferences("MyAppPref", Context.MODE_PRIVATE)
-    val coroutineScope = rememberCoroutineScope()
 
-    // studentId 생성 함수
-    fun generateStudentId(grade: String, classNo: String, studentNo: String): String {
-        val classStr = classNo.padStart(2, '0')
-        val numStr = studentNo.padStart(2, '0')
-        return grade + classStr + numStr
-    }
-
+    // 회원가입 성공 시 로그인 화면으로 이동
     LaunchedEffect(authViewModel.token) {
         if (authViewModel.token != null) {
-            // 회원가입 성공시 로그인 페이지로 이동
             navController.navigate(Screen.SignIn.route)
         }
     }
 
-    // SignUpScreen.kt의 performSignUp 함수를 이렇게 수정하세요
     // 회원가입 함수
     fun performSignUp() {
         Log.d("SignUp", "회원가입 버튼 클릭됨")
@@ -88,7 +75,7 @@ fun SignUpScreen(navController: NavController) {
         )
 
         Log.d("SignUp", "ViewModel을 통한 회원가입 요청: $request")
-        authViewModel.signup(request)  // ✅ ViewModel만 사용
+        authViewModel.signup(request)  // ✅ ViewModel 호출
     }
 
     Box(
@@ -194,8 +181,9 @@ fun SignUpScreen(navController: NavController) {
                 fontWeight = FontWeight.Medium
             )
 
+            // 🔹 Sign Up 버튼 (보여만 주고 기능 없음)
             FloatingActionButton(
-                onClick = { performSignUp() },
+                onClick = { /* 기능 없음 */ },
                 shape = CircleShape,
                 contentColor = Color.White,
                 containerColor = Color.Black,
@@ -221,19 +209,16 @@ fun SignUpScreen(navController: NavController) {
             }
         }
 
-        // Sign In 버튼 (보조용)
+        // 🔹 Sign In 버튼 (실제 회원가입 실행 후 이동)
         TextButton(
             onClick = {
-                if (name.isNotBlank() && grade.isNotBlank() && classNo.isNotBlank() &&
-                    studentNo.isNotBlank() && major.isNotBlank() && password.isNotBlank()
+                if (name.isNotBlank() && grade.isNotBlank() && classNo.isNotBlank()
+                    && studentNo.isNotBlank() && major.isNotBlank() && password.isNotBlank()
                 ) {
-                    navController.navigate(Screen.SignIn.route)
+                    performSignUp()   // 회원가입 요청
+                    navController.navigate(Screen.SignIn.route) // ✅ 회원가입 요청 직후 로그인 화면으로 이동
                 } else {
-                    Toast.makeText(
-                        context,
-                        "모든 정보를 입력하고 회원가입을 완료해주세요.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(context, "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }
             },
             shape = ButtonDefaults.shape,
@@ -247,6 +232,7 @@ fun SignUpScreen(navController: NavController) {
                 textDecoration = TextDecoration.Underline
             )
         }
+
     }
 }
 
