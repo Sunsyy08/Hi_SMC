@@ -135,34 +135,34 @@ fun SignUpScreen(navController: NavController) {
 
 // 학년, 반, 번호 (가로 배치)
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                NumberDropdown(
+                CurvedNumberPicker(
                     label = "학년",
-                    options = (1..3).map { it.toString() }, // 1~3학년
-                    selectedValue = grade,
-                    onValueChange = { grade = it },
+                    range = 1..3,
+                    selectedValue = grade.toIntOrNull() ?: 1,
+                    onValueChange = { grade = it.toString() },
                     modifier = Modifier.weight(1f)
                 )
-                NumberDropdown(
+                CurvedNumberPicker(
                     label = "반",
-                    options = (1..9).map { it.toString() }, // 1~10반
-                    selectedValue = classNo,
-                    onValueChange = { classNo = it },
+                    range = 1..9,
+                    selectedValue = classNo.toIntOrNull() ?: 1,
+                    onValueChange = { classNo = it.toString() },
                     modifier = Modifier.weight(1f)
                 )
-                NumberDropdown(
+                CurvedNumberPicker(
                     label = "번호",
-                    options = (1..25).map { it.toString() }, // 1~30번
-                    selectedValue = studentNo,
-                    onValueChange = { studentNo = it },
+                    range = 1..25,
+                    selectedValue = studentNo.toIntOrNull() ?: 1,
+                    onValueChange = { studentNo = it.toString() },
                     modifier = Modifier.weight(1f)
                 )
             }
+
+
 
             Spacer(modifier = Modifier.height(12.dp))
 
