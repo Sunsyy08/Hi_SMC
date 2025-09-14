@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.*
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -99,30 +101,43 @@ fun SignInScreen(navController: NavController) {
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                OutlinedTextField(
-                    modifier = Modifier.height(60.dp).width(350.dp),
-                    value = grade,
-                    onValueChange = { grade = it },
-                    shape = RoundedCornerShape(20.dp),
-                    label = { Text("학년") }
-                )
+                // 학년, 반, 번호 (가로 배치)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    NumberDropdown(
+                        label = "학년",
+                        options = (1..3).map { it.toString() }, // 1~3학년
+                        selectedValue = grade,
+                        onValueChange = { grade = it },
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    NumberDropdown(
+                        label = "반",
+                        options = (1..9).map { it.toString() }, // 1~15반
+                        selectedValue = classNo,
+                        onValueChange = { classNo = it },
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    NumberDropdown(
+                        label = "번호",
+                        options = (1..25).map { it.toString() }, // 1~50번
+                        selectedValue = studentNo,
+                        onValueChange = { studentNo = it },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+
                 Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(
-                    modifier = Modifier.height(60.dp).width(350.dp),
-                    value = classNo,
-                    onValueChange = { classNo = it },
-                    shape = RoundedCornerShape(20.dp),
-                    label = { Text("반") }
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(
-                    modifier = Modifier.height(60.dp).width(350.dp),
-                    value = studentNo,
-                    onValueChange = { studentNo = it },
-                    shape = RoundedCornerShape(20.dp),
-                    label = { Text("번호") }
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+
+                // 비밀번호
                 OutlinedTextField(
                     modifier = Modifier.height(60.dp).width(350.dp),
                     value = password,
@@ -131,6 +146,7 @@ fun SignInScreen(navController: NavController) {
                     label = { Text("비밀번호") }
                 )
             }
+
         }
 
         // 하단 원, Back 버튼
