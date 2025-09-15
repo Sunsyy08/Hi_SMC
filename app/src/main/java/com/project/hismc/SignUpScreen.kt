@@ -37,6 +37,7 @@ import com.project.hismc.auth.AuthRequest
 import com.project.hismc.auth.AuthViewModel
 import com.project.hismc.ui.theme.HismcTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(navController: NavController) {
     var name by remember { mutableStateOf("") }
@@ -48,6 +49,10 @@ fun SignUpScreen(navController: NavController) {
 
     val context = LocalContext.current
     val authViewModel: AuthViewModel = viewModel()
+
+    // 학과 선택 리스트
+    val majors = listOf("스마트 보안솔루션과", "모빌리티메이커과", "인공지능소프트웨어과", "게임소프트웨어과")
+    var expanded by remember { mutableStateOf(false) }
 
     // 회원가입 성공 시 로그인 화면으로 이동
     LaunchedEffect(authViewModel.token) {
@@ -167,13 +172,40 @@ fun SignUpScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
 // 학과
-            OutlinedTextField(
-                modifier = Modifier.height(60.dp).width(350.dp),
-                value = major,
-                onValueChange = { major = it },
-                shape = RoundedCornerShape(10.dp),
-                label = { Text("학과") }
-            )
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+                modifier = Modifier.width(350.dp).height(60.dp)
+            ) {
+                OutlinedTextField(
+                    value = major,
+                    onValueChange = { },
+                    readOnly = true,
+                    label = { Text("학과") },
+                    shape = RoundedCornerShape(10.dp),
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    majors.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option) },
+                            onClick = {
+                                major = option
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
             Spacer(modifier = Modifier.height(12.dp))
 
 // 비밀번호
