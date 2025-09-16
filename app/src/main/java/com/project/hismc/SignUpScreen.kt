@@ -54,14 +54,14 @@ fun SignUpScreen(navController: NavController) {
     val majors = listOf("스마트 보안솔루션과", "모빌리티메이커과", "인공지능소프트웨어과", "게임소프트웨어과")
     var expanded by remember { mutableStateOf(false) }
 
-    // 회원가입 성공 시 로그인 화면으로 이동
+    // 회원가입 성공 시 처리 (홈 화면으로 직접 이동하지 않고 로그인 화면으로)
     LaunchedEffect(authViewModel.token) {
         if (authViewModel.token != null) {
             navController.navigate(Screen.SignIn.route)
         }
     }
 
-    // 회원가입 함수
+    // 회원가입 함수 (수정됨)
     fun performSignUp() {
         Log.d("SignUp", "회원가입 버튼 클릭됨")
 
@@ -83,6 +83,9 @@ fun SignUpScreen(navController: NavController) {
 
         Log.d("SignUp", "ViewModel을 통한 회원가입 요청: $request")
         authViewModel.signup(request)  // ✅ ViewModel 호출
+
+        // ✅ 전공 정보를 포함해서 로그인 화면으로 이동
+        navController.navigate(Screen.SignIn.createRoute(major))
     }
 
     Box(
@@ -167,8 +170,6 @@ fun SignUpScreen(navController: NavController) {
                 )
             }
 
-
-
             Spacer(modifier = Modifier.height(12.dp))
 
 // 학과
@@ -217,7 +218,6 @@ fun SignUpScreen(navController: NavController) {
                 label = { Text("비밀번호") }
             )
 
-
             Text(
                 text = "Sign Up",
                 fontSize = 26.sp,
@@ -253,14 +253,13 @@ fun SignUpScreen(navController: NavController) {
             }
         }
 
-        // 🔹 Sign In 버튼 (실제 회원가입 실행 후 이동)
+        // 🔹 Sign Up 버튼 (실제 회원가입 실행)
         TextButton(
             onClick = {
                 if (name.isNotBlank() && grade.isNotBlank() && classNo.isNotBlank()
                     && studentNo.isNotBlank() && major.isNotBlank() && password.isNotBlank()
                 ) {
-                    performSignUp()   // 회원가입 요청
-                    navController.navigate(Screen.SignIn.route) // ✅ 회원가입 요청 직후 로그인 화면으로 이동
+                    performSignUp()   // ✅ 회원가입 요청 (전공 정보를 로그인 화면으로 전달)
                 } else {
                     Toast.makeText(context, "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
                 }
@@ -269,14 +268,13 @@ fun SignUpScreen(navController: NavController) {
             modifier = Modifier.offset(x = 270.dp, y = 840.dp).zIndex(1f)
         ) {
             Text(
-                text = "Sign In",
+                text = "Sign Up",  // ✅ 텍스트 수정 (Sign In -> Sign Up)
                 color = Color.White,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Normal,
                 textDecoration = TextDecoration.Underline
             )
         }
-
     }
 }
 

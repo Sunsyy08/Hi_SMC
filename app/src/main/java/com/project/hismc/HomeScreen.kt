@@ -33,14 +33,13 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, major: String) {
     val pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 1)
 
     val mealViewModel: MealViewModel = viewModel()
     val meals by mealViewModel.mealInfo.collectAsState()
     val school by mealViewModel.schoolInfo.collectAsState()
 
-    // 컬러 팔레트
     val primaryBlue = Color(0xFF1E3A8A)
     val accentBlue = Color(0xFF3B82F6)
     val lightBlue = Color(0xFFDBEAFE)
@@ -79,7 +78,7 @@ fun HomeScreen(navController: NavController) {
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 급식 메뉴 제목
+                // 🍽️ 급식 메뉴
                 Text(
                     text = "🍽️ 급식 메뉴",
                     fontSize = 22.sp,
@@ -88,11 +87,11 @@ fun HomeScreen(navController: NavController) {
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
 
-                // 급식 카드 슬라이더
+                // 급식 카드
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(400.dp), // 높이 늘려서 스크롤 최소화
+                        .height(400.dp),
                     shape = RoundedCornerShape(24.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -185,10 +184,35 @@ fun HomeScreen(navController: NavController) {
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // 🔹 학과 카드 추가
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(8.dp)
+                ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "📘 나의 학과: $major",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = primaryBlue
+                        )
+                    }
+                }
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

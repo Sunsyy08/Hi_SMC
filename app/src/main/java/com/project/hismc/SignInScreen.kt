@@ -43,7 +43,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 @Composable
-fun SignInScreen(navController: NavController) {
+fun SignInScreen(navController: NavController, major: String? = null) {
     var grade by remember { mutableStateOf("") }
     var classNo by remember { mutableStateOf("") }
     var studentNo by remember { mutableStateOf("") }
@@ -92,12 +92,33 @@ fun SignInScreen(navController: NavController) {
             )
         }
 
+        // ✅ 회원가입에서 온 전공 정보 표시 (있는 경우에만)
+        if (!major.isNullOrBlank()) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+                    .offset(y = 380.dp),
+                shape = RoundedCornerShape(15.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Text(
+                    text = "📘 선택한 학과: $major",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF1565C0),
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
+
         // 로그인 입력란
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 500.dp),
+                    .padding(top = if (major.isNullOrBlank()) 500.dp else 470.dp), // 전공 카드가 있으면 위치 조정
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -130,7 +151,6 @@ fun SignInScreen(navController: NavController) {
                     )
                 }
 
-
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // 비밀번호
@@ -142,7 +162,6 @@ fun SignInScreen(navController: NavController) {
                     label = { Text("비밀번호") }
                 )
             }
-
         }
 
         // 하단 원, Back 버튼
@@ -184,7 +203,10 @@ fun SignInScreen(navController: NavController) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 600.dp, start = 220.dp),
+                .padding(
+                    top = if (major.isNullOrBlank()) 600.dp else 580.dp, // 전공 카드가 있으면 위치 조정
+                    start = 220.dp
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -213,8 +235,11 @@ fun SignInScreen(navController: NavController) {
                         try {
                             val response = AuthRepository.api.login(request)
                             if (response.isSuccessful && response.body()?.success == true) {
-                                Toast.makeText(context, "로그인 성공! 토큰: ${response.body()?.token}", Toast.LENGTH_SHORT).show()
-                                navController.navigate(Screen.Home.route)
+                                Toast.makeText(context, "로그인 성공!", Toast.LENGTH_SHORT).show()
+
+                                // ✅ 전공 정보를 홈 화면에 전달 (회원가입에서 온 경우 해당 전공, 아니면 기본값)
+                                val userMajor = major ?: "정보 없음"
+                                navController.navigate(Screen.Home.createRoute(userMajor))
                             } else {
                                 Toast.makeText(context, response.body()?.message ?: "로그인 실패", Toast.LENGTH_SHORT).show()
                             }
