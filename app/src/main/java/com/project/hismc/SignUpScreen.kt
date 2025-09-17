@@ -268,7 +268,7 @@ fun SignUpScreen(navController: NavController) {
             modifier = Modifier.offset(x = 270.dp, y = 840.dp).zIndex(1f)
         ) {
             Text(
-                text = "Sign Up",  // ✅ 텍스트 수정 (Sign In -> Sign Up)
+                text = "Sign In",
                 color = Color.White,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Normal,
