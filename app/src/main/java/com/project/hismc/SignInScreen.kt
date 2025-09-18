@@ -92,33 +92,12 @@ fun SignInScreen(navController: NavController, major: String? = null) {
             )
         }
 
-        // ✅ 회원가입에서 온 전공 정보 표시 (있는 경우에만)
-        if (!major.isNullOrBlank()) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp)
-                    .offset(y = 380.dp),
-                shape = RoundedCornerShape(15.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-                Text(
-                    text = "📘 선택한 학과: $major",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF1565C0),
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
-
         // 로그인 입력란
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = if (major.isNullOrBlank()) 500.dp else 470.dp), // 전공 카드가 있으면 위치 조정
+                    .padding(top = 500.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
