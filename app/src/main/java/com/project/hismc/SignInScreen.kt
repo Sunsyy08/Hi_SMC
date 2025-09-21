@@ -183,7 +183,7 @@ fun SignInScreen(navController: NavController, major: String? = null) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(
-                    top = if (major.isNullOrBlank()) 600.dp else 580.dp, // 전공 카드가 있으면 위치 조정
+                    top = if (major.isNullOrBlank()) 780.dp else 660.dp, // 전공 카드가 있으면 위치 조정
                     start = 220.dp
                 ),
             verticalAlignment = Alignment.CenterVertically

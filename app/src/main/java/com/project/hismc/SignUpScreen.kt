@@ -125,13 +125,12 @@ fun SignUpScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding(),
-            verticalArrangement = Arrangement.Center,
+                .statusBarsPadding()
+                .padding(bottom = 120.dp), // ✅ 하단 원과 겹치지 않게 여백 추가
+            verticalArrangement = Arrangement.Bottom, // ✅ 전체 입력폼을 화면 하단으로
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(180.dp))
-
-// 이름
+            // 이름
             OutlinedTextField(
                 modifier = Modifier.height(60.dp).width(350.dp),
                 value = name,
@@ -141,7 +140,7 @@ fun SignUpScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-// 학년, 반, 번호 (가로 배치)
+            // 학년, 반, 번호
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -169,10 +168,9 @@ fun SignUpScreen(navController: NavController) {
                     modifier = Modifier.weight(1f)
                 )
             }
-
             Spacer(modifier = Modifier.height(12.dp))
 
-// 학과
+            // 학과 선택
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded },
@@ -209,7 +207,7 @@ fun SignUpScreen(navController: NavController) {
             }
             Spacer(modifier = Modifier.height(12.dp))
 
-// 비밀번호
+            // 비밀번호
             OutlinedTextField(
                 modifier = Modifier.height(60.dp).width(350.dp),
                 value = password,
@@ -217,26 +215,6 @@ fun SignUpScreen(navController: NavController) {
                 shape = RoundedCornerShape(10.dp),
                 label = { Text("비밀번호") }
             )
-
-            Text(
-                text = "Sign Up",
-                fontSize = 26.sp,
-                modifier = Modifier.offset(x = 30.dp, y = 130.dp),
-                fontWeight = FontWeight.Medium
-            )
-
-            // 🔹 Sign Up 버튼 (보여만 주고 기능 없음)
-            FloatingActionButton(
-                onClick = { /* 기능 없음 */ },
-                shape = CircleShape,
-                contentColor = Color.White,
-                containerColor = Color.Black,
-                modifier = Modifier
-                    .offset(x = 120.dp, y = 90.dp)
-                    .size(50.dp),
-            ) {
-                Icon(Icons.Filled.ArrowForward, "회원가입 버튼")
-            }
         }
 
         // 하단 배경 원
