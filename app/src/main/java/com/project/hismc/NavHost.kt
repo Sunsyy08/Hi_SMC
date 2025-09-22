@@ -1,46 +1,36 @@
 package com.project.hismc
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import com.project.hismc.UserViewModel
 
 @Composable
-fun SMCNavHost(navController: NavHostController){
-    NavHost(navController = navController, startDestination = Screen.Start.route){
+fun SMCNavHost(navController: NavHostController) {
+    // 🔹 NavHost 범위에서 UserViewModel 생성
+    val userViewModel: UserViewModel = viewModel()
 
-        composable(Screen.Start.route){
+    NavHost(navController = navController, startDestination = Screen.Start.route) {
+
+        composable(Screen.Start.route) {
             StartScreen(navController = navController)
         }
 
         composable(Screen.SignUp.route) {
-            SignUpScreen(navController = navController)
+            // 회원가입 완료 시 userViewModel.setMajor(선택한 학과) 해주면 됨
+            SignUpScreen(navController = navController, userViewModel = userViewModel)
         }
 
-        // ✅ SignIn 화면에 major 파라미터 추가
-        composable(
-            route = "signin?major={major}",  // Screen.SignIn.route 대신 직접 작성
-            arguments = listOf(
-                navArgument("major") {
-                    type = NavType.StringType
-                    defaultValue = null
-                    nullable = true
-                }
-            )
-        ) { backStackEntry ->
-            val major = backStackEntry.arguments?.getString("major")
-            SignInScreen(navController = navController, major = major)
+        composable(Screen.SignIn.route) {
+            // 로그인에서 필요하면 userViewModel.setMajor(...) 가능
+            SignInScreen(navController = navController, userViewModel = userViewModel)
         }
 
-        composable(
-            route = Screen.Home.route,
-            arguments = listOf(navArgument("major") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val major = backStackEntry.arguments?.getString("major") ?: "정보 없음"
-            HomeScreen(navController = navController, major = major)
+        composable(Screen.Home.route) {
+            // Home 화면에서는 userViewModel에서 major 불러오기
+            HomeScreen(navController = navController, userViewModel = userViewModel)
         }
 
         composable(Screen.Profile.route) {
@@ -50,7 +40,8 @@ fun SMCNavHost(navController: NavHostController){
         composable(Screen.Timetable.route) {
             TimetableScreen(
                 navController = navController,
-                apiKey = "df0ad9860d1c49618a5f8de265a5c621")
+                apiKey = "df0ad9860d1c49618a5f8de265a5c621"
+            )
         }
     }
 }

@@ -37,9 +37,10 @@ import com.project.hismc.auth.AuthRequest
 import com.project.hismc.auth.AuthViewModel
 import com.project.hismc.ui.theme.HismcTheme
 
+// SignUpScreen.kt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(navController: NavController) {
+fun SignUpScreen(navController: NavController, userViewModel: UserViewModel) {
     var name by remember { mutableStateOf("") }
     var grade by remember { mutableStateOf("") }
     var classNo by remember { mutableStateOf("") }
@@ -54,23 +55,19 @@ fun SignUpScreen(navController: NavController) {
     val majors = listOf("스마트 보안솔루션과", "모빌리티메이커과", "인공지능소프트웨어과", "게임소프트웨어과")
     var expanded by remember { mutableStateOf(false) }
 
-    // 회원가입 성공 시 처리 (홈 화면으로 직접 이동하지 않고 로그인 화면으로)
-    LaunchedEffect(authViewModel.token) {
-        if (authViewModel.token != null) {
-            navController.navigate(Screen.SignIn.route)
-        }
+    // ✅ 디버깅: UserViewModel 상태 확인
+    LaunchedEffect(Unit) {
+        Log.d("SignUpScreen", "SignUpScreen 시작 - UserViewModel: $userViewModel")
     }
 
-    // 회원가입 함수 (수정됨)
+    // 회원가입 함수
     fun performSignUp() {
-        Log.d("SignUp", "회원가입 버튼 클릭됨")
-
-        if (name.isBlank() || grade.isBlank() || classNo.isBlank() ||
-            studentNo.isBlank() || major.isBlank() || password.isBlank()
-        ) {
+        if (name.isBlank() || grade.isBlank() || classNo.isBlank() || studentNo.isBlank() || major.isBlank() || password.isBlank()) {
             Toast.makeText(context, "모든 필드를 입력해주세요.", Toast.LENGTH_SHORT).show()
             return
         }
+
+        Log.d("SignUpScreen", "회원가입 시도 - 선택된 학과: $major")
 
         val request = AuthRequest(
             grade = grade.trim(),
@@ -81,11 +78,19 @@ fun SignUpScreen(navController: NavController) {
             password = password.trim()
         )
 
-        Log.d("SignUp", "ViewModel을 통한 회원가입 요청: $request")
-        authViewModel.signup(request)  // ✅ ViewModel 호출
+        // ✅ 중요: UserViewModel에 학과 저장
+        userViewModel.setMajor(major)
 
-        // ✅ 전공 정보를 포함해서 로그인 화면으로 이동
-        navController.navigate(Screen.SignIn.createRoute(major))
+        // 저장 후 확인
+        Log.d("SignUpScreen", "학과 저장 후 확인: ${userViewModel.getMajor()}")
+
+        // 서버 요청
+        authViewModel.signup(request)
+
+        Toast.makeText(context, "회원가입 완료! 로그인해주세요.", Toast.LENGTH_SHORT).show()
+
+        // 로그인 화면으로 이동
+        navController.navigate(Screen.SignIn.route)
     }
 
     Box(
@@ -126,8 +131,8 @@ fun SignUpScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
-                .padding(bottom = 120.dp), // ✅ 하단 원과 겹치지 않게 여백 추가
-            verticalArrangement = Arrangement.Bottom, // ✅ 전체 입력폼을 화면 하단으로
+                .padding(bottom = 120.dp),
+            verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // 이름
@@ -200,6 +205,7 @@ fun SignUpScreen(navController: NavController) {
                             onClick = {
                                 major = option
                                 expanded = false
+                                Log.d("SignUpScreen", "학과 선택됨: $option")
                             }
                         )
                     }
@@ -231,22 +237,14 @@ fun SignUpScreen(navController: NavController) {
             }
         }
 
-        // 🔹 Sign Up 버튼 (실제 회원가입 실행)
+        // Sign Up 버튼
         TextButton(
-            onClick = {
-                if (name.isNotBlank() && grade.isNotBlank() && classNo.isNotBlank()
-                    && studentNo.isNotBlank() && major.isNotBlank() && password.isNotBlank()
-                ) {
-                    performSignUp()   // ✅ 회원가입 요청 (전공 정보를 로그인 화면으로 전달)
-                } else {
-                    Toast.makeText(context, "모든 정보를 입력해주세요.", Toast.LENGTH_SHORT).show()
-                }
-            },
+            onClick = { performSignUp() },
             shape = ButtonDefaults.shape,
             modifier = Modifier.offset(x = 270.dp, y = 840.dp).zIndex(1f)
         ) {
             Text(
-                text = "Sign In",
+                text = "Sign Up",
                 color = Color.White,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Normal,
@@ -260,6 +258,6 @@ fun SignUpScreen(navController: NavController) {
 @Composable
 fun PreviewSignUp() {
     HismcTheme {
-        SignUpScreen(navController = rememberNavController())
+
     }
 }

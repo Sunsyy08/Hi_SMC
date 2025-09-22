@@ -1,5 +1,6 @@
 package com.project.hismc
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -42,17 +43,32 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+// SignInScreen.kt
 @Composable
-fun SignInScreen(navController: NavController, major: String? = null) {
+fun SignInScreen(navController: NavController, userViewModel: UserViewModel) {
     var grade by remember { mutableStateOf("") }
     var classNo by remember { mutableStateOf("") }
     var studentNo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     val context = LocalContext.current
-
     val authViewModel: AuthViewModel = viewModel()
     val coroutineScope = rememberCoroutineScope()
+
+    // UserViewModel에서 학과 정보 가져오기
+    val major by userViewModel.major.collectAsState()
+
+    // ✅ 디버깅: 화면 진입 시 상태 확인
+    LaunchedEffect(Unit) {
+        Log.d("SignInScreen", "SignInScreen 시작 - UserViewModel: $userViewModel")
+        Log.d("SignInScreen", "현재 major 값: $major")
+        Log.d("SignInScreen", "직접 getMajor(): ${userViewModel.getMajor()}")
+    }
+
+    // ✅ major 값이 변경될 때마다 로그 출력
+    LaunchedEffect(major) {
+        Log.d("SignInScreen", "major 값 변경됨: $major")
+    }
 
     // 학번(studentId) 생성
     fun generateStudentId(grade: String, classNo: String, studentNo: String): String {
@@ -92,12 +108,64 @@ fun SignInScreen(navController: NavController, major: String? = null) {
             )
         }
 
+        // ✅ 학과 표시 카드 (디버깅 정보 포함)
+        /*major?.let { selectedMajor ->
+            Log.d("SignInScreen", "학과 카드 표시: $selectedMajor")
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .padding(horizontal = 30.dp)
+                    .offset(y = 420.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "📘 선택된 학과: $selectedMajor",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF1E3A8A)
+                    )
+                }
+            }
+        } ?: run {
+            // ✅ major가 null인 경우 디버깅 정보 표시
+            Log.d("SignInScreen", "학과 정보가 null임")
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .padding(horizontal = 30.dp)
+                    .offset(y = 420.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
+                elevation = CardDefaults.cardElevation(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "⚠️ 학과 정보 없음 (디버깅)",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFFD32F2F)
+                    )
+                }
+            }
+        }*/
+
         // 로그인 입력란
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 500.dp),
+                    .padding(top = 520.dp), // 고정된 위치 사용
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -182,10 +250,7 @@ fun SignInScreen(navController: NavController, major: String? = null) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(
-                    top = if (major.isNullOrBlank()) 780.dp else 660.dp, // 전공 카드가 있으면 위치 조정
-                    start = 220.dp
-                ),
+                .padding(top = 700.dp, start = 220.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -201,24 +266,22 @@ fun SignInScreen(navController: NavController, major: String? = null) {
                         return@FloatingActionButton
                     }
 
-                    // ✅ 학번 생성
                     val studentId = generateStudentId(grade, classNo, studentNo)
+                    val request = LoginRequest(studentId = studentId, password = password)
 
-                    // ✅ 로그인 요청 객체 (LoginRequest 사용)
-                    val request = LoginRequest(
-                        studentId = studentId,
-                        password = password
-                    )
+                    Log.d("SignInScreen", "로그인 시도 - 현재 major: $major")
 
                     coroutineScope.launch {
                         try {
                             val response = AuthRepository.api.login(request)
                             if (response.isSuccessful && response.body()?.success == true) {
                                 Toast.makeText(context, "로그인 성공!", Toast.LENGTH_SHORT).show()
+                                Log.d("SignInScreen", "로그인 성공 - 홈으로 이동")
 
-                                // ✅ 전공 정보를 홈 화면에 전달 (회원가입에서 온 경우 해당 전공, 아니면 기본값)
-                                val userMajor = major ?: "정보 없음"
-                                navController.navigate(Screen.Home.createRoute(userMajor))
+                                // ✅ 홈 화면으로 이동
+                                navController.navigate(Screen.Home.route) {
+                                    popUpTo(Screen.SignIn.route) { inclusive = true }
+                                }
                             } else {
                                 Toast.makeText(context, response.body()?.message ?: "로그인 실패", Toast.LENGTH_SHORT).show()
                             }
@@ -244,6 +307,6 @@ fun SignInScreen(navController: NavController, major: String? = null) {
 @Composable
 fun PreviewSignIn() {
     HismcTheme {
-        SignInScreen(navController = rememberNavController())
+
     }
 }

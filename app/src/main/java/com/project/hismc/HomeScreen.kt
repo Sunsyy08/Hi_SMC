@@ -1,5 +1,6 @@
 package com.project.hismc
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -24,21 +25,52 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.hismc.data.DrawerItems
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+class UserViewModel : ViewModel() {
+    private val _major = MutableStateFlow<String?>(null)
+    val major: StateFlow<String?> = _major.asStateFlow()
+
+    fun setMajor(newMajor: String) {
+        Log.d("UserViewModel", "setMajor 호출됨: $newMajor")
+        _major.value = newMajor
+        Log.d("UserViewModel", "현재 major 값: ${_major.value}")
+    }
+
+    fun getMajor(): String? {
+        val currentMajor = _major.value
+        Log.d("UserViewModel", "getMajor 호출됨: $currentMajor")
+        return currentMajor
+    }
+
+    init {
+        Log.d("UserViewModel", "UserViewModel 초기화됨")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("UserViewModel", "UserViewModel 해제됨")
+    }
+}
+
 @Composable
-fun HomeScreen(navController: NavController, major: String) {
+fun HomeScreen(navController: NavController, userViewModel: UserViewModel) {
     val pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 1)
 
     val mealViewModel: MealViewModel = viewModel()
     val meals by mealViewModel.mealInfo.collectAsState()
     val school by mealViewModel.schoolInfo.collectAsState()
+    val major by userViewModel.major.collectAsState()
 
     val primaryBlue = Color(0xFF1E3A8A)
     val accentBlue = Color(0xFF3B82F6)
