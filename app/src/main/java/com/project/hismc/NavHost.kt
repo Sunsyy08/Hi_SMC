@@ -19,17 +19,14 @@ fun SMCNavHost(navController: NavHostController) {
         }
 
         composable(Screen.SignUp.route) {
-            // 회원가입 완료 시 userViewModel.setMajor(선택한 학과) 해주면 됨
             SignUpScreen(navController = navController, userViewModel = userViewModel)
         }
 
         composable(Screen.SignIn.route) {
-            // 로그인에서 필요하면 userViewModel.setMajor(...) 가능
             SignInScreen(navController = navController, userViewModel = userViewModel)
         }
 
         composable(Screen.Home.route) {
-            // Home 화면에서는 userViewModel에서 major 불러오기
             HomeScreen(navController = navController, userViewModel = userViewModel)
         }
 

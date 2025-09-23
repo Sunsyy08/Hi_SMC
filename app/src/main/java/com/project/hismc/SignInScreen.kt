@@ -301,12 +301,3 @@ fun SignInScreen(navController: NavController, userViewModel: UserViewModel) {
         }
     }
 }
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewSignIn() {
-    HismcTheme {
-
-    }
-}

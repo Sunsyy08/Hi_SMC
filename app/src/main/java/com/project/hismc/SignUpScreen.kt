@@ -253,11 +253,3 @@ fun SignUpScreen(navController: NavController, userViewModel: UserViewModel) {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewSignUp() {
-    HismcTheme {
-
-    }
-}
