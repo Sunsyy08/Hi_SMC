@@ -86,42 +86,6 @@ fun NumberDropdown(
     }
 }
 
-//@Composable
-//fun NumberPicker(
-//    label: String,
-//    range: IntRange,
-//    selectedValue: Int,
-//    onValueChange: (Int) -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    Column(
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        modifier = modifier
-//    ) {
-//        Text(text = label, style = MaterialTheme.typography.bodyMedium)
-//
-//        AndroidView(
-//            factory = { context ->
-//                android.widget.NumberPicker(context).apply {
-//                    minValue = range.first
-//                    maxValue = range.last
-//                    value = selectedValue
-//                    wrapSelectorWheel = true // 무한 스크롤
-//                    setOnValueChangedListener { _, _, newVal ->
-//                        onValueChange(newVal)
-//                    }
-//                }
-//            },
-//            update = { picker ->
-//                if (picker.value != selectedValue) {
-//                    picker.value = selectedValue
-//                }
-//            },
-//            modifier = Modifier.height(120.dp) // 높이 조절 가능
-//        )
-//    }
-//}
-
 @Composable
 fun CurvedNumberPicker(
     label: String,

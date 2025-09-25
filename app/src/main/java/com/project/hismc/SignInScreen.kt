@@ -108,58 +108,6 @@ fun SignInScreen(navController: NavController, userViewModel: UserViewModel) {
             )
         }
 
-        // ✅ 학과 표시 카드 (디버깅 정보 포함)
-        /*major?.let { selectedMajor ->
-            Log.d("SignInScreen", "학과 카드 표시: $selectedMajor")
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .padding(horizontal = 30.dp)
-                    .offset(y = 420.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
-                elevation = CardDefaults.cardElevation(8.dp)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "📘 선택된 학과: $selectedMajor",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF1E3A8A)
-                    )
-                }
-            }
-        } ?: run {
-            // ✅ major가 null인 경우 디버깅 정보 표시
-            Log.d("SignInScreen", "학과 정보가 null임")
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .padding(horizontal = 30.dp)
-                    .offset(y = 420.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFEBEE)),
-                elevation = CardDefaults.cardElevation(8.dp)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "⚠️ 학과 정보 없음 (디버깅)",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFFD32F2F)
-                    )
-                }
-            }
-        }*/
-
         // 로그인 입력란
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
