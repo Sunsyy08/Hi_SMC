@@ -63,6 +63,7 @@ class UserViewModel : ViewModel() {
     }
 }
 
+// 홈 화면
 @Composable
 fun HomeScreen(navController: NavController, userViewModel: UserViewModel) {
     val pagerState = rememberPagerState(pageCount = { 3 }, initialPage = 1)
