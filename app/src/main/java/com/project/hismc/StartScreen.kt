@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.hismc.ui.theme.HismcTheme
 
+// No Vibe Coding
 @Composable
 fun StartScreen(navController: NavController){
     Column(
