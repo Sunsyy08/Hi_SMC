@@ -40,5 +40,10 @@ fun SMCNavHost(navController: NavHostController) {
                 apiKey = "df0ad9860d1c49618a5f8de265a5c621"
             )
         }
+        composable(Screen.LostItems.route) {
+            LostItemsScreen(
+                navController = navController
+            )
+        }
     }
 }

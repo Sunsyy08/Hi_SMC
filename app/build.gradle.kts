@@ -41,6 +41,9 @@ android {
 
 dependencies {
 
+    // 아키콘
+    implementation("androidx.compose.material:material-icons-extended")
+
     implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     implementation("androidx.compose.material3:material3:1.3.2")

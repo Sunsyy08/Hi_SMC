@@ -9,6 +9,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Backpack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -257,7 +258,8 @@ fun NavDrawer(
     val drawerItem = listOf(
         DrawerItems(Icons.Default.Home, "Home", 0, false, Screen.Home.route),
         DrawerItems(Icons.Default.Person, "Profile", 0, false, Screen.Profile.route),
-        DrawerItems(Icons.Default.DateRange, "시간표", 0, false, Screen.Timetable.route)
+        DrawerItems(Icons.Default.DateRange, "시간표", 0, false, Screen.Timetable.route),
+        DrawerItems(Icons.Default.Backpack, "분실물", 0, false, Screen.LostItems.route)
     )
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
