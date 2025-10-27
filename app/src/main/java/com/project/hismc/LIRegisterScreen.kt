@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
@@ -16,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,24 +25,25 @@ import com.project.hismc.ui.theme.HismcTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FoundItemRegisterScreen(
-    onBackClick: () -> Unit = {}
-) {
-    var itemName by remember { mutableStateOf(TextFieldValue("")) }
+fun LostItemRegisterScreen(onBackClick: () -> Unit = {}) {
+    val scrollState = rememberScrollState()
+
+    var category by remember { mutableStateOf(TextFieldValue("")) }
     var location by remember { mutableStateOf(TextFieldValue("")) }
     var time by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
-    var contact by remember { mutableStateOf(TextFieldValue("")) }
+    var studentId by remember { mutableStateOf(TextFieldValue("")) }
+    var name by remember { mutableStateOf(TextFieldValue("")) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        text = "습득물 등록",
-                        fontWeight = FontWeight.Bold,
+                        text = "분실물 등록",
                         fontSize = 18.sp,
-                        color = Color(0xFF1F2937)
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF111827)
                     )
                 },
                 navigationIcon = {
@@ -49,36 +51,54 @@ fun FoundItemRegisterScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "뒤로가기",
-                            tint = Color(0xFF1F2937)
+                            tint = Color(0xFF111827)
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White
+                    containerColor = Color.White,
+                    titleContentColor = Color(0xFF111827)
                 )
             )
         },
-        containerColor = Color(0xFFF4F5F7)
+        bottomBar = {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Button(
+                    onClick = { /* 등록 처리 */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6))
+                ) {
+                    Text("등록하기", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        },
+        containerColor = Color(0xFFF4F5F7) // Scaffold 배경 (Material3)
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-            //  사진 추가 박스
+            // 사진 추가 박스
+            Text(text = "사진 추가", fontSize = 14.sp, fontWeight = FontWeight.Bold)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp)
-                    .border(
-                        BorderStroke(1.dp, Color(0xFFCBD5E1)),
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                    .height(160.dp)
+                    .border(BorderStroke(1.dp, Color(0xFFCBD5E1)), shape = RoundedCornerShape(12.dp))
                     .background(Color.White, RoundedCornerShape(12.dp))
-                    .clickable { /* 이미지 업로드 로직 */ },
+                    .clickable { /* 이미지 업로드 */ },
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -89,108 +109,116 @@ fun FoundItemRegisterScreen(
                         modifier = Modifier.size(36.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("사진 추가", fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                    Text(
-                        "습득물의 사진을 추가해주세요.",
-                        fontSize = 12.sp,
-                        color = Color(0xFF9CA3AF)
-                    )
+                    Text("사진 추가", fontWeight = FontWeight.Bold)
+                    Text("습득물의 사진을 추가해주세요.", color = Color(0xFF9CA3AF), fontSize = 12.sp)
                 }
             }
 
-            //  습득물 종류
+            // 분실물 종류
+            RequiredLabel(label = "습득물 종류")
             OutlinedTextField(
-                value = itemName,
-                onValueChange = { itemName = it },
-                label = { Text("습득물 종류") },
+                value = category,
+                onValueChange = { category = it },
                 placeholder = { Text("예: 지갑, 휴대폰, 가방 등") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF3B82F6),
-                    unfocusedBorderColor = Color(0xFFCBD5E1)
+                    unfocusedBorderColor = Color(0xFFCBD5E1),
+                    focusedBorderColor = Color(0xFF3B82F6)
                 )
             )
 
-            //  습득 장소
+            // 습득 장소
+            RequiredLabel(label = "습득 장소")
             OutlinedTextField(
                 value = location,
                 onValueChange = { location = it },
-                label = { Text("습득 장소") },
-                placeholder = { Text("자세한 위치를 입력해주세요.") },
+                placeholder = { Text("예: 강당 앞, 운동장 근처 등") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF3B82F6),
-                    unfocusedBorderColor = Color(0xFFCBD5E1)
+                    unfocusedBorderColor = Color(0xFFCBD5E1),
+                    focusedBorderColor = Color(0xFF3B82F6)
                 )
             )
 
-            //  습득 시간
+            // 습득 시간
+            RequiredLabel(label = "습득 시간")
             OutlinedTextField(
                 value = time,
                 onValueChange = { time = it },
-                label = { Text("습득 시간") },
-                placeholder = { Text("예: 2025-10-27 14:30") },
+                placeholder = { Text("예: 2025/10/27 14:30") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF3B82F6),
-                    unfocusedBorderColor = Color(0xFFCBD5E1)
+                    unfocusedBorderColor = Color(0xFFCBD5E1),
+                    focusedBorderColor = Color(0xFF3B82F6)
                 )
             )
 
-            //  상세 설명
+            // 상세 설명
+            RequiredLabel(label = "상세 설명")
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
-                label = { Text("상세 설명") },
-                placeholder = { Text("특징이나 구체적인 정보를 입력해주세요.") },
+                placeholder = { Text("분실물의 색상, 브랜드, 특징 등을 입력해주세요.") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp),
                 shape = RoundedCornerShape(10.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF3B82F6),
-                    unfocusedBorderColor = Color(0xFFCBD5E1)
-                )
+                    unfocusedBorderColor = Color(0xFFCBD5E1),
+                    focusedBorderColor = Color(0xFF3B82F6)
+                ),
+                maxLines = 6
             )
 
-            //  연락처
+            // 학번
+            RequiredLabel(label = "학번")
             OutlinedTextField(
-                value = contact,
-                onValueChange = { contact = it },
-                label = { Text("연락처") },
-                placeholder = { Text("연락받으실 번호를 입력해주세요.") },
+                value = studentId,
+                onValueChange = { studentId = it },
+                placeholder = { Text("학번을 입력해주세요.") },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF3B82F6),
-                    unfocusedBorderColor = Color(0xFFCBD5E1)
+                    unfocusedBorderColor = Color(0xFFCBD5E1),
+                    focusedBorderColor = Color(0xFF3B82F6)
                 )
             )
 
-            // 등록 버튼
-            Button(
-                onClick = { /* 등록 처리 */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF3B82F6)
+            // 이름
+            RequiredLabel(label = "이름")
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                placeholder = { Text("이름을 입력해주세요.") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(10.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color(0xFFCBD5E1),
+                    focusedBorderColor = Color(0xFF3B82F6)
                 )
-            ) {
-                Text("등록하기", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            }
+            )
+
+            Spacer(modifier = Modifier.height(80.dp))
         }
+    }
+}
+
+@Composable
+fun RequiredLabel(label: String) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 4.dp)) {
+        Text(label, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = Color(0xFF111827))
+        Spacer(modifier = Modifier.width(4.dp))
+        Text("*", color = Color.Red, fontWeight = FontWeight.Bold)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun FoundItemRegisterScreenPreview() {
+fun LostItemRegisterPreview() {
     HismcTheme {
-        FoundItemRegisterScreen()
+        LostItemRegisterScreen()
     }
 }
