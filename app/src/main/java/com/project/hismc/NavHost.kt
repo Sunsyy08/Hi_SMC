@@ -1,5 +1,6 @@
 package com.project.hismc
 
+import android.R.attr.onClick
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -42,6 +43,12 @@ fun SMCNavHost(navController: NavHostController) {
         }
         composable(Screen.LostItems.route) {
             LostItemsScreen(
+                navController = navController
+            )
+        }
+        composable(Screen.LIRegister.route) {
+            LostItemRegisterScreen(
+
                 navController = navController
             )
         }

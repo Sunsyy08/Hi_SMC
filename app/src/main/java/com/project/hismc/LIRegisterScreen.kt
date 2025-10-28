@@ -21,11 +21,16 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.project.hismc.ui.theme.HismcTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LostItemRegisterScreen(onBackClick: () -> Unit = {}) {
+fun LostItemRegisterScreen(
+    onClick: () -> Unit = {},
+    navController: NavController
+) {
     val scrollState = rememberScrollState()
 
     var category by remember { mutableStateOf(TextFieldValue("")) }
@@ -47,7 +52,7 @@ fun LostItemRegisterScreen(onBackClick: () -> Unit = {}) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onBackClick() }) {
+                    IconButton(onClick = { navController.navigate(Screen.LostItems.route) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "뒤로가기",
@@ -215,10 +220,10 @@ fun RequiredLabel(label: String) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LostItemRegisterPreview() {
-    HismcTheme {
-        LostItemRegisterScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LostItemRegisterPreview() {
+//    HismcTheme {
+//        LostItemRegisterScreen( navController = rememberNavController())
+//    }
+//}
