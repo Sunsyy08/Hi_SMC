@@ -59,7 +59,7 @@ fun FindLostItemScreen() {
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color(0xFFF2F2F2)) // 🔹 회색 배경
+                .background(Color(0xFFF2F2F2))
         ) {
             // 탭
             Row(
@@ -89,14 +89,13 @@ fun FindLostItemScreen() {
                     .fillMaxSize()
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                // 내 신고 내역
                 item {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 6.dp),
                         shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White), // 🔹 카드 흰색
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Column(
@@ -112,7 +111,6 @@ fun FindLostItemScreen() {
                     }
                 }
 
-                // 분실물 카드 리스트
                 items(3) { index ->
                     FindLostItemCard(
                         title = when (index) {
@@ -140,7 +138,7 @@ fun FindLostItemCard(title: String, location: String, statusText: String) {
             .fillMaxWidth()
             .padding(vertical = 6.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White), // 🔹 카드 흰색
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -154,7 +152,7 @@ fun FindLostItemCard(title: String, location: String, statusText: String) {
                 modifier = Modifier
                     .size(60.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFFE0E0E0)) // 연회색 placeholder
+                    .background(Color(0xFFE0E0E0))
             )
 
             Spacer(modifier = Modifier.width(12.dp))
